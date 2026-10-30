@@ -40,4 +40,9 @@ Carve-out en curso (F10): este repo ya arranca el núcleo con sus tests en verde
 anfitriones (F10-T5).
 
 ## Licencia
-Pendiente de elegir (recomendación: MIT). Ver `LICENSE`.
+Doble licencia (© 2026 Peterson Sena):
+- **Uso no comercial** (personal, estudio, hobby, ONG, educación/sector público): gratis bajo **PolyForm
+  Noncommercial 1.0.0** (`LICENSE`), conservando el crédito (`Required Notice`).
+- **Uso comercial**: requiere **licencia de pago** aparte — ver `COMMERCIAL.md` (petersonsena24@gmail.com).
+
+No es asesoría legal; para los términos comerciales finales, consulta a un profesional.
