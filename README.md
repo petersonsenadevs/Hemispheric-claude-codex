@@ -15,6 +15,19 @@ donde ya trabajas: Claude Code / Codex (hooks), Obsidian (plugin) y standalone.
 - `cortex/` — `cortex.mjs` + `cortex-textos.mjs`: la memoria como un HTML local (la «Cortex»), sin red.
 - `tests/` — suites deterministas sin LLM: `test-frontera` (núcleo limpio), `test-hechos` (motor), `test-hard-recall`.
 
+## Instalar
+```
+node install.mjs                 # registra los hooks en .claude/settings.json del proyecto actual
+node install.mjs --global        # para todos los proyectos (~/.claude/settings.json)
+node install.mjs --uninstall     # quita los hooks de Hemispheric (deja intacto lo demás)
+node install.mjs --dry-run       # enseña lo que haría, sin escribir
+```
+Merge-safe (no pisa tus hooks ni tus permisos) e idempotente. Crea `.hemispheric/` (memoria del proyecto) y
+`~/.config/hemispheric/` (memoria global), y deja `.hemispheric/hooks.json` (manifiesto portable).
+
+**Codex**: ejecuta los hooks por la vía de plugin (marketplace en `~/.codex/config.toml`), no por `settings.json`
+de proyecto; el registro nativo en Codex llega con el empaquetado como plugin (F10-T4). En Claude ya quedan activos.
+
 ## Probar
 ```
 npm test
