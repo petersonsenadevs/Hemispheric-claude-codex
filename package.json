@@ -1,0 +1,17 @@
+{
+  "name": "hemispheric",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Memoria determinista, offline y sin dependencias para agentes de IA (Claude Code, Codex), Obsidian y standalone.",
+  "type": "module",
+  "bin": {
+    "hemispheric": "cli/memoria.mjs"
+  },
+  "scripts": {
+    "test": "node tests/test-frontera.mjs && node tests/test-hechos.mjs && node tests/test-hard-recall.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "SEE LICENSE IN LICENSE"
+}
