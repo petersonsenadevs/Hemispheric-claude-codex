@@ -146,7 +146,8 @@ if (opt('--informe')) {   // X-T4: el uso REAL (lo que se inyectó en las sesion
 if (opt('--cortex')) {   // Cortex: la memoria en un HTML local, sin red; --cliente: sin nada privado, para enseñarlo
     if (!m.datosCortex) { out('Este Senzu no trae Cortex todavía: actualízalo.'); process.exit(2); }
     const cliente = !!opt('--cliente');
-    const { htmlCortex } = await import(pathToFileURL(path.join(AQUI, '..', 'cortex', 'cortex.mjs')).href);
+    const cortexFile = [path.join(AQUI, '..', 'cortex', 'cortex.mjs'), path.join(AQUI, 'cortex.mjs')].find(f => fs.existsSync(f));
+    const { htmlCortex } = await import(pathToFileURL(cortexFile).href);
     const datos = m.datosCortex(root, { cliente });
     const dir = opt('--salida') && opt('--salida') !== true ? path.resolve(String(opt('--salida'))) : m.ruta(root, 'cortex');
     fs.mkdirSync(dir, { recursive: true });
