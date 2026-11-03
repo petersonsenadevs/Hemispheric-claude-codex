@@ -1,4 +1,4 @@
-// Motor de HECHOS de Hemispheric: memoria determinista en CUALQUIER idioma, sin red ni modelos (devlog 098).
+// Motor de HECHOS de Corvusmem: memoria determinista en CUALQUIER idioma, sin red ni modelos (devlog 098).
 // Dimensiones con sustitución, validez en el tiempo, deduplicación, cupos por familia y motivo de cada resultado,
 // sin Postgres, Redis ni embeddings.
 // Reparto: el AGENTE (Claude o Codex) entiende el idioma y decide qué es un hecho y en qué dimensión va; este motor
@@ -26,9 +26,9 @@ export const FAMILIAS_VARIOS = /^(objetivo|pendiente|nota|hecho|enlace|aprendiza
 // (antes del multiusuario había de hecho un solo autor), así el caso de un solo dev queda limpio.
 export const PERSONALES = /^(identidad|preferencia)(\.|$)/;
 const normAutor = s => String(s == null ? '' : s).trim().toLowerCase();
-// Autor determinista y sin red: HEMI_USER > git user.email del repo > usuario del SO.
+// Autor determinista y sin red: CORVUS_USER > git user.email del repo > usuario del SO.
 function autorActual(root, env = process.env) {
-    const forzado = normAutor(env.HEMI_USER);
+    const forzado = normAutor(env.CORVUS_USER);
     if (forzado) return forzado;
     try {
         const r = spawnSync('git', ['-C', String(root || '.'), 'config', 'user.email'], { encoding: 'utf8' });
@@ -380,7 +380,7 @@ export function avisosAutocontenido(hecho) {
 // X-T18: guarda de ambigüedad. Un valor nuevo con MATICES («trabajo part-time», «vivo entre A y B», «antes en
 // Málaga», «a veces en remoto») no debe BORRAR el valor vigente bueno en una familia de valor único: deja ambos
 // activos y avisa. Una sustitución limpia («ahora vivo en Madrid») sí sustituye. Marcadores en forma normalizada
-// (normalizar() ya quita tildes y pasa a minúsculas), multilingües (es/en/pt/fr/de/it). Idea de Hemispheric
+// (normalizar() ya quita tildes y pasa a minúsculas), multilingües (es/en/pt/fr/de/it). Idea de Corvusmem
 // (services/candidates.py: _AMBIGUITY_MARKERS), con límite de palabra Unicode para no colar falsos positivos
 // («restaurantes»→«antes», «acerca»→«cerca»). Las frases van antes que su prefijo («cerca de» antes que «cerca»).
 const MARCADORES_AMBIGUEDAD = [
@@ -913,7 +913,7 @@ export function pistaTemporal(texto) {
 }
 // X-T20 · ¿pregunta por el FUTURO? («¿dónde viviré?», «tras la mudanza», «el mes que viene», «where will I move»).
 // Con una, el recuerdo trae el hecho datado en el futuro (desde>ahora) por delante de lo vigente ahora. Multilingüe,
-// en forma normalizada (sin tildes). Idea de Hemispheric (services/temporal.py: _FUTURE_QUERY_PATTERNS).
+// en forma normalizada (sin tildes). Idea de Corvusmem (services/temporal.py: _FUTURE_QUERY_PATTERNS).
 const PISTAS_FUTURO = new Set(('mudare mudaremos vivire viviremos estare estaremos trabajare ire iremos sere seremos proximamente mudanza '
     + 'will shall upcoming '
     + 'mudarei morarei estarei mudanca proximamente '

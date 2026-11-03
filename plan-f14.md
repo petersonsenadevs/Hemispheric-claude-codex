@@ -1,4 +1,4 @@
-# F14 — Diseño sellado: Hemispheric producto serio (CLI inglés + multiusuario)
+# F14 — Diseño sellado: Corvusmem producto serio (CLI inglés + multiusuario)
 
 > Documento de la tarjeta **F14-T1**. Fija el modelo ANTES de tocar código. Regla de toda la fase: **sin romper nada**
 > — los `.jsonl` ya guardados se leen igual, los flags en castellano siguen funcionando, `npm test` verde tras cada paso.
@@ -8,7 +8,7 @@
 
 ### A.1 — De dónde sale `autor` (determinista, sin red)
 Prioridad al guardar un hecho, primera que exista gana:
-1. `HEMI_USER` (variable de entorno) — override explícito, para CI o casos raros.
+1. `CORVUS_USER` (variable de entorno) — override explícito, para CI o casos raros.
 2. `git config user.email` del repo (lectura de fichero local, sin red) — identidad natural por persona en un repo de equipo.
 3. `os.userInfo().username` — el usuario del sistema operativo.
 
@@ -42,9 +42,9 @@ Resultado: cero hechos perdidos, cero duplicados en el caso de un solo usuario, 
 se muestra «· by <autor>». Si solo hay un autor (caso normal), no se ensucia la salida.
 
 ## B) Residuo de marca: ruta de la memoria global
-Hoy la memoria global de Hemispheric se guarda en `~/.config/**senzu**/` (residuo del carve-out). Para un producto serio
-es mezcla de marca. **Decisión (sin romper):** leer de `~/.config/hemispheric/` y, si no existe, **caer a
-`~/.config/senzu/`** (migración perezosa: lo que se escriba va ya a `hemispheric`). Nadie pierde su memoria global.
+Hoy la memoria global de Corvusmem se guarda en `~/.config/**senzu**/` (residuo del carve-out). Para un producto serio
+es mezcla de marca. **Decisión (sin romper):** leer de `~/.config/corvusmem/` y, si no existe, **caer a
+`~/.config/senzu/`** (migración perezosa: lo que se escriba va ya a `corvusmem`). Nadie pierde su memoria global.
 → Se implementa junto a F14-T3 (toca `rutaMemoriaUsuario` en `lib.mjs`/`host.mjs`).
 
 ## C) CLI en inglés con alias en castellano (cero ruptura)

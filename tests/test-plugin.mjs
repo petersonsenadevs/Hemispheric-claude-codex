@@ -24,7 +24,7 @@ ok(r.status === 0, 'empaqueta sin error', r.stderr ? r.stderr.slice(0, 120) : `s
 const pj = path.join(dir, '.claude-plugin', 'plugin.json');
 ok(fs.existsSync(pj), 'existe .claude-plugin/plugin.json');
 const plugin = fs.existsSync(pj) ? JSON.parse(fs.readFileSync(pj, 'utf8')) : {};
-ok(plugin.name === 'hemispheric', 'plugin.json name = hemispheric', plugin.name);
+ok(plugin.name === 'corvusmem', 'plugin.json name = corvusmem', plugin.name);
 ok(typeof plugin.version === 'string' && plugin.version.length > 0, 'plugin.json tiene version');
 
 // hooks.json

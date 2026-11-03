@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Batería VISUAL de la Cortex (Hemispheric F11-T2): no comprueba estructura (eso es test-cortex), sino que el cerebro
+// Batería VISUAL de la Cortex (Corvusmem F11-T2): no comprueba estructura (eso es test-cortex), sino que el cerebro
 // se PINTA de verdad y se comporta, midiendo PÍXELES del canvas 3D en un navegador real. Rebuscada a propósito:
 // idiomas, datos límite (vacío, uno, enorme, caracteres raros), el foco de búsqueda por diffing de frames, el volumen
 // y la privacidad de la vista cliente. Siembra memoria REAL con el motor (sin mocks).

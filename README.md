@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/petersonsenadevs/Hemispheric-claude-codex/main/assets/crow.png" alt="Hemispheric — the crow that remembers" width="200" />
+  <img src="https://raw.githubusercontent.com/petersonsenadevs/Corvusmem-claude-codex/main/assets/crow.png" alt="Corvusmem — the crow that remembers" width="200" />
 </p>
 
-# Hemispheric
+# Corvusmem
 
-**Deterministic, offline, zero-dependency memory for AI coding agents.** Hemispheric stores the stable facts your
+**Deterministic, offline, zero-dependency memory for AI coding agents.** Corvusmem stores the stable facts your
 agent learns, replaces and dates them, and recalls them the same way every time — in any language, with no network
 and no servers. It plugs into where you already work: Claude Code / Codex (hooks) and a standalone CLI.
 
@@ -12,7 +12,7 @@ and no servers. It plugs into where you already work: Claude Code / Codex (hooks
 > reference for structure and commands.
 
 ## How it works
-Your agent forgets everything between sessions. Hemispheric is a memory it keeps: facts live in a lightweight local
+Your agent forgets everything between sessions. Corvusmem is a memory it keeps: facts live in a lightweight local
 graph, retrieved by name, date and relevance with two-hop activation — no embeddings, no vector database, no API key.
 Same input, same result. The whole memory is a file you own.
 
@@ -26,13 +26,13 @@ Same input, same result. The whole memory is a file you own.
 
 ## Install
 ```
-npx hemispheric install --claude     # register the hooks in the current project's .claude/settings.json
-npx hemispheric install --global     # for every project (~/.claude/settings.json)
-npx hemispheric uninstall            # remove Hemispheric's hooks (leaves everything else intact)
-npx hemispheric install --dry-run    # show what it would do, without writing
+npx corvusmem install --claude     # register the hooks in the current project's .claude/settings.json
+npx corvusmem install --global     # for every project (~/.claude/settings.json)
+npx corvusmem uninstall            # remove Corvusmem's hooks (leaves everything else intact)
+npx corvusmem install --dry-run    # show what it would do, without writing
 ```
-Merge-safe (it never overwrites your hooks or permissions) and idempotent. It creates `.hemispheric/` (project
-memory) and `~/.config/hemispheric/` (global memory), and writes `.hemispheric/hooks.json` (a portable manifest).
+Merge-safe (it never overwrites your hooks or permissions) and idempotent. It creates `.corvusmem/` (project
+memory) and `~/.config/corvusmem/` (global memory), and writes `.corvusmem/hooks.json` (a portable manifest).
 
 **Codex**: the hooks run through the plugin path (a marketplace in `~/.codex/config.toml`), not the project
 `settings.json`. Publish it to a Codex marketplace, install it and approve the hooks in the app. On Claude Code they

@@ -36,7 +36,7 @@ const cerebro = () => `<svg class="cerebro neon" viewBox="20 20 360 285" role="g
 </svg>`;
 
 const CSS = `
-/* Paleta alineada a la web de Hemispheric (D:/hemi-web, src/styles/tokens.css: design-system «hemispheric»): base
+/* Paleta alineada a la web de Corvusmem (D:/hemi-web, src/styles/tokens.css: design-system «corvusmem»): base
    casi-negra + acento ÁMBAR, tipografía serif en títulos. Las 5 zonas se rearmonizan a tonos tierra/joya apagados:
    distinguibles entre sí y distintos del ámbar, que queda reservado al ESTADO ACTIVO (--foco). */
 :root {

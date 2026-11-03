@@ -1,10 +1,10 @@
 {
-  "name": "hemispheric",
+  "name": "corvusmem",
   "version": "0.1.0",
   "description": "Deterministic, offline, zero-dependency memory for AI coding agents (Claude Code, Codex) and a standalone CLI.",
   "type": "module",
   "bin": {
-    "hemispheric": "cli/hemispheric.mjs"
+    "corvusmem": "cli/corvusmem.mjs"
   },
   "files": [
     "src/",
@@ -34,12 +34,12 @@
   ],
   "author": "Peterson Sena",
   "license": "SEE LICENSE IN LICENSE",
-  "homepage": "https://gethemispheric.com",
+  "homepage": "https://corvusmem.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/petersonsenadevs/Hemispheric-claude-codex.git"
+    "url": "git+https://github.com/petersonsenadevs/Corvusmem-claude-codex.git"
   },
   "bugs": {
-    "url": "https://github.com/petersonsenadevs/Hemispheric-claude-codex/issues"
+    "url": "https://github.com/petersonsenadevs/Corvusmem-claude-codex/issues"
   }
 }

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-// Instalador de Hemispheric (F10-T2). Registra los hooks del núcleo y prepara las carpetas de memoria, sin
+// Instalador de Corvusmem (F10-T2). Registra los hooks del núcleo y prepara las carpetas de memoria, sin
 // dependencias y sin red. Determinista, merge-safe (no pisa lo que el usuario ya tenga) e idempotente.
 //
 //   node install.mjs [opciones]
 //     --project <dir>   proyecto destino (por defecto: el directorio actual)
 //     --home <dir>      HOME para la memoria global y los ajustes de usuario (por defecto: el del sistema)
 //     --global          registra los hooks en el HOME (todos los proyectos) en vez de en el proyecto
-//     --uninstall       quita los hooks de Hemispheric (deja intacto lo demás)
+//     --uninstall       quita los hooks de Corvusmem (deja intacto lo demás)
 //     --dry-run         enseña lo que haría, sin escribir
 //     --plugin <dir>    empaqueta un PLUGIN autocontenido (Claude/Codex) en <dir> y sale (no toca settings.json)
 //
@@ -14,7 +14,7 @@
 // Codex: ejecuta los hooks por la vía de PLUGIN. Con `--plugin <dir>` se genera ese plugin en el MISMO formato que el
 //   plugin de Senzu que Codex ya consume: .claude-plugin/plugin.json + hooks/hooks.json (con ${CLAUDE_PLUGIN_ROOT}) +
 //   los .mjs del núcleo. El usuario lo publica en un marketplace de Codex, lo instala y aprueba los hooks en la app
-//   (quedan en ~/.codex/config.toml -> hooks.state). Sin --plugin, el instalador deja el manifiesto .hemispheric/hooks.json.
+//   (quedan en ~/.codex/config.toml -> hooks.state). Sin --plugin, el instalador deja el manifiesto .corvusmem/hooks.json.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -57,7 +57,7 @@ function gruposPlugin(ev) {
     });
 }
 
-// Empaqueta Hemispheric como PLUGIN autocontenido (mismo formato que el plugin de Senzu que Codex ya consume):
+// Empaqueta Corvusmem como PLUGIN autocontenido (mismo formato que el plugin de Senzu que Codex ya consume):
 // .claude-plugin/plugin.json + hooks/hooks.json (con ${CLAUDE_PLUGIN_ROOT}) + los .mjs del nucleo copiados a hooks/.
 // El usuario lo publica en un marketplace de Codex, lo instala y APRUEBA los hooks en la app (quedan en
 // ~/.codex/config.toml -> hooks.state). Vale igual como plugin de Claude.
@@ -75,7 +75,7 @@ function empaquetarPlugin(destino) {
     let n = 0;
     for (const f of fs.readdirSync(SRC)) if (f.endsWith('.mjs')) { fs.copyFileSync(path.join(SRC, f), path.join(hooksDir, f)); n++; }
     // 3) plugin.json
-    const plugin = { name: 'hemispheric', description: pkg.description || 'Memoria determinista, offline y sin dependencias para agentes de IA.', version: pkg.version || '0.0.0', author: { name: 'Peterson Sena' }, license: 'SEE LICENSE IN LICENSE' };
+    const plugin = { name: 'corvusmem', description: pkg.description || 'Memoria determinista, offline y sin dependencias para agentes de IA.', version: pkg.version || '0.0.0', author: { name: 'Peterson Sena' }, license: 'SEE LICENSE IN LICENSE' };
     fs.writeFileSync(path.join(dir, '.claude-plugin', 'plugin.json'), JSON.stringify(plugin, null, 2) + '\n');
     log(`  [plugin] ${dir}: .claude-plugin/plugin.json + hooks/hooks.json + ${n} .mjs`);
     log('  Publish it to a Codex marketplace (like Senzu\'s); install it and approve the hooks in the app.');
@@ -122,19 +122,19 @@ function asegurarDir(dir) {
 }
 
 function run() {
-    if (!fs.existsSync(path.join(SRC, 'facts.mjs'))) { log(`Core not found in ${SRC}. Run install.mjs from the Hemispheric repo.`); process.exit(2); }
+    if (!fs.existsSync(path.join(SRC, 'facts.mjs'))) { log(`Core not found in ${SRC}. Run install.mjs from the Corvusmem repo.`); process.exit(2); }
 
     // Modo empaquetar plugin (Claude/Codex): no toca settings.json; genera un plugin autocontenido en <dir>.
     const destinoPlugin = opt('--plugin');
     if (destinoPlugin && destinoPlugin !== true) {
-        log(`Hemispheric · package plugin (Claude/Codex)${DRY ? ' (dry-run)' : ''}`);
+        log(`Corvusmem · package plugin (Claude/Codex)${DRY ? ' (dry-run)' : ''}`);
         empaquetarPlugin(destinoPlugin);
         log('Done.');
         return;
     }
 
     const quitar = has('--uninstall');
-    log(`Hemispheric · ${quitar ? 'uninstall' : 'install'}${GLOBAL ? ' (global)' : ''}${DRY ? ' (dry-run)' : ''}`);
+    log(`Corvusmem · ${quitar ? 'uninstall' : 'install'}${GLOBAL ? ' (global)' : ''}${DRY ? ' (dry-run)' : ''}`);
 
     // 1) Claude: hooks en settings.json (proyecto o HOME)
     const settingsFile = GLOBAL ? path.join(HOME, '.claude', 'settings.json') : path.join(PROYECTO, '.claude', 'settings.json');
@@ -142,18 +142,18 @@ function run() {
     try { settings = leerJson(settingsFile); }
     catch { log(`  [claude] WARNING: ${settingsFile} is not valid JSON; leaving it untouched (fix it and retry).`); process.exit(2); }
     escribir(settingsFile, fusionar(settings, { quitar }));
-    log(`  [claude] ${quitar ? 'Hemispheric hooks removed from' : 'hooks registered in'} ${settingsFile}`);
+    log(`  [claude] ${quitar ? 'Corvusmem hooks removed from' : 'hooks registered in'} ${settingsFile}`);
 
     // 2) Manifiesto portable de hooks (lo consume el plugin para Claude/Codex, F10-T4)
-    const manifest = path.join(PROYECTO, '.hemispheric', 'hooks.json');
+    const manifest = path.join(PROYECTO, '.corvusmem', 'hooks.json');
     if (quitar) { if (!DRY) { try { fs.rmSync(manifest, { force: true }); } catch {} } log(`  [manifest] removed ${manifest}`); }
     else { const h = {}; for (const ev of Object.keys(HOOKSET)) h[ev] = gruposDe(ev); escribir(manifest, { hooks: h }); log(`  [manifest] ${manifest} (used by the Codex/Claude plugin)`); }
 
     // 3) Carpetas de memoria (no se borran al desinstalar: son datos del usuario)
     if (!quitar) {
-        asegurarDir(path.join(PROYECTO, '.hemispheric'));            // memoria del proyecto
-        asegurarDir(path.join(HOME, '.config', 'hemispheric'));      // memoria global del usuario
-        log('  [memory] .hemispheric/ (project) and ~/.config/hemispheric/ (global) ready');
+        asegurarDir(path.join(PROYECTO, '.corvusmem'));            // memoria del proyecto
+        asegurarDir(path.join(HOME, '.config', 'corvusmem'));      // memoria global del usuario
+        log('  [memory] .corvusmem/ (project) and ~/.config/corvusmem/ (global) ready');
     }
 
     log('Done.' + (quitar ? '' : ' Codex: per-event hooks go through the plugin; in Claude they are already active.'));

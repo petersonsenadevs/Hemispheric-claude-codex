@@ -1,6 +1,6 @@
 // Hook UserPromptSubmit: el RECUERDO VIVO. Con cada mensaje del usuario, lo que la memoria ya sabe de eso —hechos
 // (en cualquier idioma), decisiones de MEMORIA.md y entradas del devlog— llega al agente antes de responder, con su
-// fuente y su motivo. Así no pregunta lo que ya se sabe ni contradice lo decidido (plan de Hemispheric, F2-T2).
+// fuente y su motivo. Así no pregunta lo que ya se sabe ni contradice lo decidido (plan de Corvusmem, F2-T2).
 // Corto y sin ruido: hasta 5 recuerdos por encima de un umbral, nada que ya se inyectara en la sesión, nada con
 // mensajes sin palabras con peso («ok», «sí»), ni con informes de subagentes. Los valores van como DATOS citados.
 

@@ -23,7 +23,7 @@ const clave = 'memarch-' + crypto.createHash('md5').update(rel.toLowerCase()).di
 if (!testOnce(sid, clave)) process.exit(0);
 
 const dice = decisionesDeArchivo(root, rel);
-// Hechos del TEMA del archivo (plan de Hemispheric, F2-T3): la consulta sale de su ruta y su nombre
+// Hechos del TEMA del archivo (plan de Corvusmem, F2-T3): la consulta sale de su ruta y su nombre
 // («app/Services/PagoStripeService.php» → «services pago stripe service»), sin carpetas genéricas que no dicen nada
 // del tema. Más exigente que con los mensajes (3 como mucho, umbral más alto): al editar, el ruido molesta más.
 const GENERICAS = new Set(['app', 'src', 'lib', 'index', 'main', 'core', 'utils', 'util', 'helpers', 'components', 'component', 'http',

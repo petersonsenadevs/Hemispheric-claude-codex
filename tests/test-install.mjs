@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Instalador de Hemispheric (F10-T2) — batería rebuscada, hermética (proyecto y HOME temporales), sin red.
+// Instalador de Corvusmem (F10-T2) — batería rebuscada, hermética (proyecto y HOME temporales), sin red.
 // Cubre: instalación limpia, reinstalación idempotente, desinstalación limpia, NO pisar lo que el usuario ya tenía,
 // settings.json inválido (no lo clobbera), --global y --dry-run (no escribe).
 //   node tests/test-install.mjs
@@ -35,8 +35,8 @@ const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('/src/' + file))
     ok(tiene(s, 'PostToolUse', 'facts-guard.mjs'), 'registra hechos-guard en PostToolUse');
     ok(tiene(s, 'Stop', 'session-state.mjs') && tiene(s, 'SessionEnd', 'session-end.mjs'), 'registra Stop y SessionEnd');
     ok(!cmds(s, 'UserPromptSubmit').some(c => c.includes('prompt-router')), 'NO registra método Senzu (prompt-router)');
-    ok(fs.existsSync(path.join(P, '.hemispheric', 'hooks.json')), 'deja el manifiesto portable .hemispheric/hooks.json');
-    ok(fs.existsSync(path.join(P, '.hemispheric')) && fs.existsSync(path.join(H, '.config', 'hemispheric')), 'crea memoria de proyecto y global');
+    ok(fs.existsSync(path.join(P, '.corvusmem', 'hooks.json')), 'deja el manifiesto portable .corvusmem/hooks.json');
+    ok(fs.existsSync(path.join(P, '.corvusmem')) && fs.existsSync(path.join(H, '.config', 'corvusmem')), 'crea memoria de proyecto y global');
 }
 
 // ---- reinstalación idempotente ------------------------------------------------------------------------
@@ -56,8 +56,8 @@ const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('/src/' + file))
     ok(r.status === 0, 'desinstalar: sale 0');
     const s = leer(settingsProy(P));
     ok(!cmds(s, 'UserPromptSubmit').some(c => c.includes('/src/')), 'desinstalar: quita nuestros hooks');
-    ok(!fs.existsSync(path.join(P, '.hemispheric', 'hooks.json')), 'desinstalar: quita el manifiesto');
-    ok(fs.existsSync(path.join(P, '.hemispheric')), 'desinstalar: NO borra la memoria del proyecto (son datos del usuario)');
+    ok(!fs.existsSync(path.join(P, '.corvusmem', 'hooks.json')), 'desinstalar: quita el manifiesto');
+    ok(fs.existsSync(path.join(P, '.corvusmem')), 'desinstalar: NO borra la memoria del proyecto (son datos del usuario)');
 }
 
 // ---- no pisar lo que el usuario ya tenía --------------------------------------------------------------
@@ -96,7 +96,7 @@ const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('/src/' + file))
 
     const P2 = nuevoProyecto(), H2 = nuevoHome();
     const r = run(P2, H2, '--dry-run');
-    ok(r.status === 0 && !fs.existsSync(settingsProy(P2)) && !fs.existsSync(path.join(P2, '.hemispheric')), '--dry-run: no escribe nada');
+    ok(r.status === 0 && !fs.existsSync(settingsProy(P2)) && !fs.existsSync(path.join(P2, '.corvusmem')), '--dry-run: no escribe nada');
 }
 
 fs.rmSync(base, { recursive: true, force: true });

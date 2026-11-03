@@ -1,6 +1,6 @@
-# Commercial use of Hemispheric
+# Commercial use of Corvusmem
 
-Hemispheric is **free for noncommercial use** (personal, study, hobby, nonprofits, educational/public
+Corvusmem is **free for noncommercial use** (personal, study, hobby, nonprofits, educational/public
 institutions) under the **PolyForm Noncommercial License 1.0.0** (see `LICENSE`). In every case you must
 **keep the credit** (the `Required Notice: Copyright 2026 Peterson Sena` line).
 

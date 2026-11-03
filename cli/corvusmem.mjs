@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// Despachador del CLI `hemispheric`: el subcomando decide a quién llama.
-//   hemispheric install [--claude|--codex|--global|--plugin <dir>...]   -> install.mjs (instalar/empaquetar)
-//   hemispheric uninstall [...]                                          -> install.mjs --uninstall
-//   hemispheric <lo que sea>                                            -> cli/memory.mjs (la CLI de memoria)
-// Asi `npx hemispheric install --claude` funciona una vez publicado (npm) o con el repo publico (npx github:...).
+// Despachador del CLI `corvusmem`: el subcomando decide a quién llama.
+//   corvusmem install [--claude|--codex|--global|--plugin <dir>...]   -> install.mjs (instalar/empaquetar)
+//   corvusmem uninstall [...]                                          -> install.mjs --uninstall
+//   corvusmem <lo que sea>                                            -> cli/memory.mjs (la CLI de memoria)
+// Asi `npx corvusmem install --claude` funciona una vez publicado (npm) o con el repo publico (npx github:...).
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

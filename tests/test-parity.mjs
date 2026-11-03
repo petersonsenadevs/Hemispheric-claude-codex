@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Paridad de inyección entre anfitriones (carve-out Hemispheric, F9-T4). El recall (recuerdo-vivo) y el arranque
+// Paridad de inyección entre anfitriones (carve-out Corvusmem, F9-T4). El recall (recuerdo-vivo) y el arranque
 // (session-start) deben salir IGUAL bajo Claude, Codex y standalone con los MISMOS hechos — salvo lo propio del
 // anfitrión (rutas). Se corre cada hook de verdad con las señales de cada anfitrión (Claude: CLAUDE_PROJECT_DIR;
 // Codex: sin esa variable, la raíz por cwd en la entrada; standalone: sin señales, cwd = proyecto) sobre proyectos

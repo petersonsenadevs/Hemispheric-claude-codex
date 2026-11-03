@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Frontera del núcleo en su propio repo (Hemispheric, F10-T1): src/ contiene SOLO el núcleo + base (cerebro), sin
+// Frontera del núcleo en su propio repo (Corvusmem, F10-T1): src/ contiene SOLO el núcleo + base (cerebro), sin
 // método Senzu, y ningún fichero de src/ importa fuera de src/. Es el gate que garantiza que el carve-out quedó
 // limpio y autocontenido. Sin red, sin LLM, determinista.
 //   node tests/test-boundary.mjs

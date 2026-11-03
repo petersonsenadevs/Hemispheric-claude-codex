@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// host.mjs — Detección de anfitrión del núcleo de memoria (carve-out Hemispheric, F9-T2).
+// host.mjs — Detección de anfitrión del núcleo de memoria (carve-out Corvusmem, F9-T2).
 // El MISMO núcleo corre bajo varios anfitriones; aquí se resuelve, por señales del entorno, determinista y sin red:
 //   · agente:   'claude' | 'codex' | 'obsidian' | 'standalone'  — el runtime que ejecuta el núcleo
 //   · senzu:    ¿está la capa Senzu presente en el proyecto?  — clave para el apretón de manos (F9-T3): si está,
@@ -9,7 +9,7 @@
 // Señales REALES del repo (ver lib.readHookInput): Claude exporta CLAUDE_PROJECT_DIR/CLAUDE_PLUGIN_ROOT; Codex no,
 // y la raíz llega como "cwd" en la entrada, con forma de parche (apply_patch / codex_tool_name); Senzu = marcador
 // senzu/senzu.json (lib.rutaMarcador). Obsidian y standalone aún no corren en este repo: Obsidian lo marca su
-// adaptador (HEMI_OBSIDIAN, F10-T3); sin señales → standalone. Todo lee de un `env` INYECTABLE: así se testea
+// adaptador (CORVUS_OBSIDIAN, F10-T3); sin señales → standalone. Todo lee de un `env` INYECTABLE: así se testea
 // hermético y queda determinista.
 import fs from 'node:fs';
 import os from 'node:os';
@@ -28,10 +28,10 @@ const existeMarcadorSenzu = raiz => { try { return fs.existsSync(rutaMarcador(ra
 
 function detectarAgente(env, input) {
     // 1) Forzado explícito, pero SOLO si es un valor conocido: una variable "mentida"/basura se ignora y se detecta igual
-    const forzado = String(env.HEMI_ANFITRION || '').toLowerCase();
+    const forzado = String(env.CORVUS_ANFITRION || '').toLowerCase();
     if (ANFITRIONES.includes(forzado)) return forzado;
     // 2) Obsidian: marcador explícito de su adaptador (gana a Claude: es una señal deliberada, no ambiental)
-    if (env.HEMI_OBSIDIAN) return 'obsidian';
+    if (env.CORVUS_OBSIDIAN) return 'obsidian';
     // 3) Claude: exporta estas variables de entorno
     if (env.CLAUDE_PROJECT_DIR || env.CLAUDE_PLUGIN_ROOT) return 'claude';
     // 4) Codex: no exporta CLAUDE_*; la raíz llega como cwd y la edición como parche
@@ -48,8 +48,8 @@ export function resolverHost({ input = {}, env = process.env, root } = {}) {
     const senzu = existeMarcadorSenzu(raiz);
     const inyeccion = agente === 'obsidian' ? 'plugin-api' : agente === 'standalone' ? 'stdout' : 'hook-stdout';
     const proyecto = senzu ? path.dirname(rutaMarcador(raiz))
-        : agente === 'obsidian' ? (env.HEMI_VAULT || null)
-            : path.join(raiz, '.hemispheric');
+        : agente === 'obsidian' ? (env.CORVUS_VAULT || null)
+            : path.join(raiz, '.corvusmem');
     return {
         agente,
         senzu,
@@ -65,7 +65,7 @@ export function resolverHost({ input = {}, env = process.env, root } = {}) {
 
 // ---------------------------------------------------------------- apretón de manos (F9-T3)
 // Que recuerdo-vivo + session-start (los que emiten additionalContext) no inyecten DOS VECES cuando hay dos capas
-// registradas para el mismo evento (p. ej. el núcleo Hemispheric y el adaptador Senzu). Cerrojo de turno
+// registradas para el mismo evento (p. ej. el núcleo Corvusmem y el adaptador Senzu). Cerrojo de turno
 // "primero-gana", atómico: la primera invocación de un evento+turno se queda el turno e inyecta; la segunda lo ve
 // y cede. El contenido es el mismo motor en ambas capas, así que da igual quién gane: basta con que inyecte UNA.
 // NO se basa en "quién es Senzu" (en el repo fuente los hooks son los de Senzu pero no hay senzu.json; un cede por

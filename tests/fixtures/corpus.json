@@ -1,5 +1,5 @@
 {
-  "_que_es": "Corpus de evaluación de la memoria de hechos (plan de Hemispheric, F4-T1). Hechos como los guardaría el agente (claves en inglés y en el idioma del hecho; algunos sin claves) y preguntas en 12 idiomas y 6 escrituras. «t» es el orden en segundos; «espera» el id del hecho que debe salir (null = no hay respuesta y debe salir vacío); «historico» pregunta por el pasado; «reservada» no se usa para afinar (F4-T4).",
+  "_que_es": "Corpus de evaluación de la memoria de hechos (plan de Corvusmem, F4-T1). Hechos como los guardaría el agente (claves en inglés y en el idioma del hecho; algunos sin claves) y preguntas en 12 idiomas y 6 escrituras. «t» es el orden en segundos; «espera» el id del hecho que debe salir (null = no hay respuesta y debe salir vacío); «historico» pregunta por el pasado; «reservada» no se usa para afinar (F4-T4).",
   "hechos": [
     { "id": "u1", "alcance": "usuario", "dimension": "identidad.nombre", "valor": "Peterson", "claves": ["nombre", "name", "llamo"], "t": 0 },
     { "id": "u2a", "alcance": "usuario", "dimension": "identidad.ubicacion", "valor": "Málaga", "texto": "vivo en Málaga", "claves": ["ciudad", "city", "vivo", "live", "ubicación", "location"], "t": 1 },
