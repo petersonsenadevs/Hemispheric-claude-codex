@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/petersonsenadevs/Corvusmem-claude-codex/main/assets/crow.png" alt="Corvusmem — the crow that remembers" width="200" />
+  <img src="https://raw.githubusercontent.com/petersonsenadevs/corvusmem/main/assets/crow.png" alt="Corvusmem — the crow that remembers" width="200" />
 </p>
 
 # Corvusmem

@@ -37,9 +37,9 @@
   "homepage": "https://corvusmem.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/petersonsenadevs/Corvusmem-claude-codex.git"
+    "url": "git+https://github.com/petersonsenadevs/corvusmem.git"
   },
   "bugs": {
-    "url": "https://github.com/petersonsenadevs/Corvusmem-claude-codex/issues"
+    "url": "https://github.com/petersonsenadevs/corvusmem/issues"
   }
 }
