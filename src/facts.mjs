@@ -16,7 +16,7 @@ import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { ruta, rutaMemoriaUsuario, rutaEstado } from './lib.mjs';
-export { rutaNativa } from './lib.mjs';   // para memoria.mjs: --path con C:\, C:/ o /c/ de Git Bash → el mismo almacén
+export { rutaNativa } from './lib.mjs';   // para memory.mjs: --path con C:\, C:/ o /c/ de Git Bash → el mismo almacén
 
 export const FAMILIAS_VARIOS = /^(objetivo|pendiente|nota|hecho|enlace|aprendizaje)(\.|$)/;
 export function rutaHechos(root, alcance = 'proyecto') {
@@ -856,13 +856,13 @@ function conCupos(lista, limite, fam) {
 
 // ---------------------------------------------------------------- recuerdo UNIFICADO: hechos + MEMORIA.md + devlog
 // Una consulta, las tres memorias: los hechos con este motor (cualquier idioma) y las decisiones y entradas con el
-// buscador del devlog (buscar.mjs --json). Cada resultado dice de dónde sale («hecho», «memoria», «devlog») y por qué;
+// buscador del devlog (search.mjs --json). Cada resultado dice de dónde sale («hecho», «memoria», «devlog») y por qué;
 // se reparten por turnos entre fuentes (las puntuaciones de motores distintos no se comparan) y una decisión que
 // sale a la vez de MEMORIA.md y de su entrada del devlog cuenta una sola vez (gana la de MEMORIA: es la vigente).
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 export function rutaBuscador(root) {
-    const c = [process.env.SENZU_BUSCADOR, path.join(AQUI, '..', 'cli', 'buscar.mjs'), path.join(AQUI, '..', 'skills', 'devlog', 'scripts', 'buscar.mjs'),
-        path.join(root, '.claude', 'skills', 'devlog', 'scripts', 'buscar.mjs'), path.join(root, '.agents', 'skills', 'devlog', 'scripts', 'buscar.mjs')].filter(Boolean);
+    const c = [process.env.SENZU_BUSCADOR, path.join(AQUI, '..', 'cli', 'search.mjs'), path.join(AQUI, '..', 'skills', 'devlog', 'scripts', 'search.mjs'),
+        path.join(root, '.claude', 'skills', 'devlog', 'scripts', 'search.mjs'), path.join(root, '.agents', 'skills', 'devlog', 'scripts', 'search.mjs')].filter(Boolean);
     return c.find(f => fs.existsSync(f)) || null;
 }
 function buscarEnDevlog(root, consulta, limite) {
@@ -1097,7 +1097,7 @@ export function actividadCortex(root, { cliente = false, ahora = hoy(), dias = 1
 // Cada vez que la memoria inyecta algo (o calla) se apunta en senzu/.estado/recuerdo-uso.jsonl (privado: la carpeta
 // se ignora en git). Al cerrar la sesión se mira lo que respondió el agente DESPUÉS de cada inyección: si el contenido
 // del recuerdo aparece, se marca «usado»; si no, «ignorado». Sin la conversación (p. ej. en Codex) queda «sin datos»:
-// no se inventa. `memoria.mjs --informe` saca las cifras reales y los casos para afinar con datos de verdad.
+// no se inventa. `memory.mjs --informe` saca las cifras reales y los casos para afinar con datos de verdad.
 const MAX_REGISTRO = 3000;   // líneas que se guardan como mucho (lo más viejo se va)
 export function rutaUso(root) { return path.join(path.dirname(rutaEstado(root)), 'recuerdo-uso.jsonl'); }   // rutaEstado da el archivo de la sesión; su carpeta (ignorada en git) crea
 export function apuntarInyeccion(root, { sid, origen, consulta, items = [] }, { ahora = hoy() } = {}) {

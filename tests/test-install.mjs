@@ -31,9 +31,9 @@ const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('/src/' + file))
     ok(r.status === 0, 'instalación limpia: sale 0', r.stderr || r.stdout);
     const s = leer(settingsProy(P));
     ok(tiene(s, 'SessionStart', 'session-start.mjs'), 'registra session-start en SessionStart');
-    ok(tiene(s, 'UserPromptSubmit', 'recuerdo-vivo.mjs') && tiene(s, 'UserPromptSubmit', 'memoria-viva.mjs'), 'registra recuerdo-vivo y memoria-viva en UserPromptSubmit');
-    ok(tiene(s, 'PostToolUse', 'hechos-guard.mjs'), 'registra hechos-guard en PostToolUse');
-    ok(tiene(s, 'Stop', 'estado-sesion.mjs') && tiene(s, 'SessionEnd', 'session-end.mjs'), 'registra Stop y SessionEnd');
+    ok(tiene(s, 'UserPromptSubmit', 'live-recall.mjs') && tiene(s, 'UserPromptSubmit', 'live-memory.mjs'), 'registra recuerdo-vivo y memoria-viva en UserPromptSubmit');
+    ok(tiene(s, 'PostToolUse', 'facts-guard.mjs'), 'registra hechos-guard en PostToolUse');
+    ok(tiene(s, 'Stop', 'session-state.mjs') && tiene(s, 'SessionEnd', 'session-end.mjs'), 'registra Stop y SessionEnd');
     ok(!cmds(s, 'UserPromptSubmit').some(c => c.includes('prompt-router')), 'NO registra método Senzu (prompt-router)');
     ok(fs.existsSync(path.join(P, '.hemispheric', 'hooks.json')), 'deja el manifiesto portable .hemispheric/hooks.json');
     ok(fs.existsSync(path.join(P, '.hemispheric')) && fs.existsSync(path.join(H, '.config', 'hemispheric')), 'crea memoria de proyecto y global');
@@ -44,8 +44,8 @@ const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('/src/' + file))
     const P = nuevoProyecto(), H = nuevoHome();
     run(P, H); run(P, H);                       // dos veces
     const s = leer(settingsProy(P));
-    ok(cmds(s, 'UserPromptSubmit').filter(c => c.includes('/src/recuerdo-vivo.mjs')).length === 1, 'idempotente: recuerdo-vivo no se duplica tras reinstalar');
-    ok(cmds(s, 'PostToolUse').filter(c => c.includes('/src/hechos-guard.mjs')).length === 2, 'idempotente: hechos-guard sigue en sus 2 grupos (Edit y Bash), sin duplicar');
+    ok(cmds(s, 'UserPromptSubmit').filter(c => c.includes('/src/live-recall.mjs')).length === 1, 'idempotente: recuerdo-vivo no se duplica tras reinstalar');
+    ok(cmds(s, 'PostToolUse').filter(c => c.includes('/src/facts-guard.mjs')).length === 2, 'idempotente: hechos-guard sigue en sus 2 grupos (Edit y Bash), sin duplicar');
 }
 
 // ---- desinstalación limpia ----------------------------------------------------------------------------
@@ -70,7 +70,7 @@ const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('/src/' + file))
     let s = leer(settingsProy(P));
     ok(s.permissions && s.permissions.allow[0] === 'Bash(ls:*)', 'no pisa: conserva permissions del usuario');
     ok(cmds(s, 'UserPromptSubmit').includes('node mi-hook.mjs'), 'no pisa: conserva el hook propio del usuario');
-    ok(tiene(s, 'UserPromptSubmit', 'recuerdo-vivo.mjs'), 'y añade el nuestro junto al suyo');
+    ok(tiene(s, 'UserPromptSubmit', 'live-recall.mjs'), 'y añade el nuestro junto al suyo');
     run(P, H, '--uninstall');
     s = leer(settingsProy(P));
     ok(cmds(s, 'UserPromptSubmit').includes('node mi-hook.mjs') && !cmds(s, 'UserPromptSubmit').some(c => c.includes('/src/')), 'desinstalar: quita el nuestro y deja el del usuario');

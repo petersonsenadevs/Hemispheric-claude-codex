@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Hard recall determinista SIN LLM (X-T19) — gate de CI del motor de memoria (core/hooks/hechos.mjs).
+// Hard recall determinista SIN LLM (X-T19) — gate de CI del motor de memoria (core/hooks/facts.mjs).
 // Barato y sin Ollama (aparte del cara a cara end-to-end de F8-T9, que sí necesita modelos). Fija los invariantes
 // de recall que importan en la vida real, triados POR CAPA:
 //   · EXTRACCIÓN / almacenamiento — el motor Node NO extrae hechos de texto libre (eso lo hace el agente/hook); la
@@ -21,7 +21,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const HOOKS = process.env.SENZU_HOOKS_DIR || path.join(ROOT, 'src');
 const base = fs.mkdtempSync(path.join(os.tmpdir(), 'senzu-hardrecall-'));
 process.env.SENZU_MEMORIA_USUARIO = path.join(base, 'usuario', 'memoria.md');
-const m = await import(pathToFileURL(path.join(HOOKS, 'hechos.mjs')).href);
+const m = await import(pathToFileURL(path.join(HOOKS, 'facts.mjs')).href);
 
 let casos = 0, fallos = 0;
 const ok = (c, n, d = '') => { casos++; if (!c) { fallos++; process.stdout.write(`FAIL ${n}${d ? ' -> ' + d : ''}\n`); } };

@@ -1,51 +1,49 @@
 # Hemispheric
 
-Memoria **determinista, offline y sin dependencias** para agentes de IA. Guarda lo estable que dice el usuario,
-lo sustituye y lo fecha, y lo recupera siempre igual — en cualquier idioma, sin red y sin servidores. Se enchufa
-donde ya trabajas: Claude Code / Codex (hooks) y standalone.
+**Deterministic, offline, zero-dependency memory for AI coding agents.** Hemispheric stores the stable facts your
+agent learns, replaces and dates them, and recalls them the same way every time — in any language, with no network
+and no servers. It plugs into where you already work: Claude Code / Codex (hooks) and a standalone CLI.
 
-> **Documentación narrativa (qué es, mensaje, la Cortex, FAQ):** [`docs.md`](./docs.md). Este README es la referencia
-> rápida de estructura y comandos.
->
-> Repo propio del motor Node, extraído de Senzu (`D:\dev-standards`) en el carve-out: aquí vive la **fuente de verdad**
-> del cerebro; Senzu consume una copia sincronizada.
+> **Narrative docs (what it is, the message, the Cortex, FAQ):** [`docs.md`](./docs.md). This README is the quick
+> reference for structure and commands.
 
-## Estructura
-- `src/` — el núcleo: motor de hechos (`hechos.mjs`), base común (`lib`, `messages`, `session-end`), detección de
-  anfitrión (`host.mjs`) y los hooks de cerebro (`recuerdo-vivo`, `session-start`, `estado-sesion`, `memoria-viva`,
-  `memoria-archivo`, `hechos-guard`). Todo con imports de mismo directorio: autocontenido, cero imports a Senzu.
-- `cli/` — `memoria.mjs`: la línea de comandos (`--guardar` / `--buscar` / `--recordar` / `--contexto` / `--cortex`).
-- `cortex/` — `cortex.mjs` + `cortex-textos.mjs`: la memoria como un HTML local (la «Cortex»), sin red.
-- `tests/` — suites deterministas sin LLM: `test-frontera` (núcleo limpio), `test-hechos` (motor), `test-hard-recall`.
+## How it works
+Your agent forgets everything between sessions. Hemispheric is a memory it keeps: facts live in a lightweight local
+graph, retrieved by name, date and relevance with two-hop activation — no embeddings, no vector database, no API key.
+Same input, same result. The whole memory is a file you own.
 
-## Instalar
+## Structure
+- `src/` — the core: the facts engine (`facts.mjs`), shared base (`lib`, `messages`, `session-end`), host detection
+  (`host.mjs`) and the brain hooks (`live-recall`, `session-start`, `session-state`, `live-memory`,
+  `file-memory`, `facts-guard`). Same-directory imports only: self-contained, zero external dependencies.
+- `cli/` — `memory.mjs`: the command line (`--save` / `--search` / `--recall` / `--context` / `--cortex`).
+- `cortex/` — `cortex.mjs` + `cortex-text.mjs`: your memory as a local HTML page (the "Cortex"), no network.
+- `tests/` — deterministic, LLM-free suites: `test-boundary` (clean core), `test-facts` (engine), `test-hard-recall`.
+
+## Install
 ```
-node install.mjs                 # registra los hooks en .claude/settings.json del proyecto actual
-node install.mjs --global        # para todos los proyectos (~/.claude/settings.json)
-node install.mjs --uninstall     # quita los hooks de Hemispheric (deja intacto lo demás)
-node install.mjs --dry-run       # enseña lo que haría, sin escribir
+npx hemispheric install --claude     # register the hooks in the current project's .claude/settings.json
+npx hemispheric install --global     # for every project (~/.claude/settings.json)
+npx hemispheric uninstall            # remove Hemispheric's hooks (leaves everything else intact)
+npx hemispheric install --dry-run    # show what it would do, without writing
 ```
-Merge-safe (no pisa tus hooks ni tus permisos) e idempotente. Crea `.hemispheric/` (memoria del proyecto) y
-`~/.config/hemispheric/` (memoria global), y deja `.hemispheric/hooks.json` (manifiesto portable).
+Merge-safe (it never overwrites your hooks or permissions) and idempotent. It creates `.hemispheric/` (project
+memory) and `~/.config/hemispheric/` (global memory), and writes `.hemispheric/hooks.json` (a portable manifest).
 
-**Codex**: ejecuta los hooks por la vía de plugin (marketplace en `~/.codex/config.toml`), no por `settings.json`
-de proyecto; el registro nativo en Codex llega con el empaquetado como plugin (F10-T4). En Claude ya quedan activos.
+**Codex**: the hooks run through the plugin path (a marketplace in `~/.codex/config.toml`), not the project
+`settings.json`. Publish it to a Codex marketplace, install it and approve the hooks in the app. On Claude Code they
+are active right away.
 
-## Probar
+## Test
 ```
 npm test
 ```
-(o `node tests/test-frontera.mjs && node tests/test-hechos.mjs && node tests/test-hard-recall.mjs`)
+(or `node tests/test-boundary.mjs && node tests/test-facts.mjs && node tests/test-hard-recall.mjs`)
 
-## Estado
-Carve-out completo (F10): núcleo + instalador propio + Senzu consumiendo este paquete por sync + paridad e2e entre
-anfitriones, todo con tests en verde. La Cortex es la fuente de verdad aquí y se sincroniza a Senzu. Pendiente no
-bloqueante: empaquetado como plugin para el registro nativo en Codex.
+## License
+Dual-licensed (© 2026 Peterson Sena):
+- **Noncommercial use** (personal, study, hobby, nonprofit, education/public sector): free under **PolyForm
+  Noncommercial 1.0.0** (`LICENSE`), keeping the credit (`Required Notice`).
+- **Commercial use**: requires a separate **paid license** — see `COMMERCIAL.md` (petersonsena24@gmail.com).
 
-## Licencia
-Doble licencia (© 2026 Peterson Sena):
-- **Uso no comercial** (personal, estudio, hobby, ONG, educación/sector público): gratis bajo **PolyForm
-  Noncommercial 1.0.0** (`LICENSE`), conservando el crédito (`Required Notice`).
-- **Uso comercial**: requiere **licencia de pago** aparte — ver `COMMERCIAL.md` (petersonsena24@gmail.com).
-
-No es asesoría legal; para los términos comerciales finales, consulta a un profesional.
+This is not legal advice; for final commercial terms, consult a professional.

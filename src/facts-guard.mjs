@@ -1,7 +1,7 @@
 // Hook de la memoria de hechos que OBLIGA a revisarla (plan de Hemispheric, F3), en cualquier idioma: no busca
 // frases (eso depende del idioma); comprueba si el agente revisó la memoria. Quien entiende si el usuario dijo algo
 // estable es el agente.
-//   PostToolUse (Bash|PowerShell): `memoria.mjs --guardar | --olvidar | --nada` (sobre el comando SIN texto citado:
+//   PostToolUse (Bash|PowerShell): `memory.mjs --guardar | --olvidar | --nada` (sobre el comando SIN texto citado:
 //      un echo que lo menciona no cuenta) → la sesión queda revisada; se apuntan los ids guardados.
 //   PostToolUse (Edit|Write…): tocar MEMORIA.md o la memoria personal del usuario (lo que hace /recordar) → revisada.
 //   Stop (F3-T2): con conversación real y sin revisión, bloquea una vez.
@@ -9,7 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { readHookInput, projectRoot, sessionFlag, sinTextoCitado, relDelProyecto, rutaNativa, ruta, rutaRel, rutaMemoriaUsuario, testOnce, rutaBuscador, editadosSesion } from './lib.mjs';
-import { palabras, palabraConPeso, todosLosHechos } from './hechos.mjs';
+import { palabras, palabraConPeso, todosLosHechos } from './facts.mjs';
 
 const p = readHookInput() || {};
 const sid = p.session_id ? String(p.session_id) : 'default';
@@ -50,7 +50,7 @@ if (evento === 'PostToolUse') {
 // ---------------- Stop: dos comprobaciones, cada una UNA vez por sesión, en un solo mensaje
 const root = projectRoot();
 const rev = leerRevision(flag);
-const cli = rutaBuscador(root).replace(/buscar\.mjs$/, 'memoria.mjs');
+const cli = rutaBuscador(root).replace(/buscar\.mjs$/, 'memory.mjs');
 const motivos = [];
 // 1. Revisar: con conversación de verdad (sin mirar el idioma: 2+ mensajes del usuario con 2+ palabras con peso, que
 //    apunta memoria-viva) y sin revisión. Sin ese registro no se inventa una conversación.

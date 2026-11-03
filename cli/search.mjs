@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Buscador del devlog: encuentra decisiones y entradas pasadas sin leer archivos enteros.
 // Ejecutar desde la RAÍZ del proyecto (cualquier agente, cualquier OS, sin dependencias):
-//   node <skills-dir>/devlog/scripts/buscar.mjs "pagos stripe" [--max 5] [--desde 2026-09] [--hasta 2026-10-15]
+//   node <skills-dir>/devlog/scripts/search.mjs "pagos stripe" [--max 5] [--desde 2026-09] [--hasta 2026-10-15]
 //        [--tipo fix|feature|decisión|memoria...] [--devlog <carpeta>] [--json]
 // Busca en devlog/MEMORIA.md (+ MEMORIA-historico.md), en cada entrada NNN-*.md por secciones y en los
 // DECISIONES.md. Tolera acentos, mayúsculas, plurales y conjugaciones (raíces), erratas de una letra y
@@ -21,18 +21,19 @@ let fuentes = [];
 for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     const sig = () => argv[++i];
+    // F14: flags en inglés (primarios) con alias en castellano
     if (a === '--max') opts.max = Math.max(1, parseInt(sig(), 10) || 5);
-    else if (a === '--desde') opts.desde = sig();
-    else if (a === '--hasta') opts.hasta = sig();
-    else if (a === '--tipo') opts.tipo = sig();
+    else if (a === '--since' || a === '--desde') opts.desde = sig();
+    else if (a === '--until' || a === '--hasta') opts.hasta = sig();
+    else if (a === '--type' || a === '--tipo') opts.tipo = sig();
     else if (a === '--devlog') opts.devlog = sig();
     else if (a === '--json') opts.json = true;
-    else if (a === '--solo-devlog') opts.soloDevlog = true;
+    else if (a === '--only-devlog' || a === '--solo-devlog') opts.soloDevlog = true;
     else if (a === '--help' || a === '-h') { ayuda(); process.exit(0); }
     else libres.push(a);
 }
 function ayuda() {
-    console.log('Uso: node buscar.mjs "<palabras>" [--max 5] [--desde AAAA-MM[-DD]] [--hasta AAAA-MM[-DD]] [--tipo fix|feature|decisión|memoria] [--devlog <carpeta>] [--solo-devlog] [--json]');
+    console.log('Usage: node search.mjs "<words>" [--max 5] [--since YYYY-MM[-DD]] [--until YYYY-MM[-DD]] [--type fix|feature|decision|memory] [--devlog <dir>] [--only-devlog] [--json]');
 }
 const consulta = libres.join(' ').trim();
 if (!consulta) { ayuda(); process.exit(2); }

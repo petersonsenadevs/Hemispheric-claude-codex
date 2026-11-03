@@ -6,7 +6,7 @@
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { readHookInput, projectRoot, testOnce, decisionesDeArchivo, outHookJson, rutaRel } from './lib.mjs';
-import { buscarHechos, anotarUso, apuntarInyeccion } from './hechos.mjs';
+import { buscarHechos, anotarUso, apuntarInyeccion } from './facts.mjs';
 
 const p = readHookInput();
 if (!p || !['Edit', 'Write', 'MultiEdit'].includes(p.tool_name)) process.exit(0);

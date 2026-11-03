@@ -2,15 +2,15 @@
 // Memoria de HECHOS (determinista, en cualquier idioma, sin red): lo que el usuario afirma de forma estable.
 // El agente entiende la frase (en el idioma que sea) y la guarda estructurada; el motor la sustituye, la fecha y la
 // recupera siempre igual. Para buscar entre idiomas, añade --claves en otros idiomas (p. ej. en inglés y en el del usuario).
-//   node memoria.mjs --guardar --dimension identidad.ubicacion --valor "Málaga" [--texto "vivo en Málaga"]
+//   node memory.mjs --guardar --dimension identidad.ubicacion --valor "Málaga" [--texto "vivo en Málaga"]
 //        [--claves "ciudad,city,vive,lives"] [--idioma es] [--alcance proyecto|usuario] [--duda] [--fuente usuario|agente|devlog] [--desde AAAA-MM-DD] [--hasta AAAA-MM-DD]
-//   node memoria.mjs --buscar "dónde vive" [--historico] [--limite 8] [--json]
-//   node memoria.mjs --contexto [--presupuesto 12]      lo vigente, repartido por familias (lo usa el inicio de sesión)
-//   node memoria.mjs --lista [--todo] | --olvidar <id>
-//   node memoria.mjs --nada [--motivo "…"]              revisado: nada estable que guardar en esta sesión
-//   node memoria.mjs --enlazar <dimensión A> <dimensión B>  (o --enlaces A,B al guardar): al recordar uno, llega el otro
-//   node memoria.mjs --informe [--dias 30] [--json]     el uso REAL: qué se inyectó, si sirvió, el ruido y los silencios
-//   node memoria.mjs --cortex [--cliente] [--salida <carpeta>] [--idioma es|en|pt|fr|de|it]   la memoria en un HTML local, sin red
+//   node memory.mjs --buscar "dónde vive" [--historico] [--limite 8] [--json]
+//   node memory.mjs --contexto [--presupuesto 12]      lo vigente, repartido por familias (lo usa el inicio de sesión)
+//   node memory.mjs --lista [--todo] | --olvidar <id>
+//   node memory.mjs --nada [--motivo "…"]              revisado: nada estable que guardar en esta sesión
+//   node memory.mjs --enlazar <dimensión A> <dimensión B>  (o --enlaces A,B al guardar): al recordar uno, llega el otro
+//   node memory.mjs --informe [--dias 30] [--json]     el uso REAL: qué se inyectó, si sirvió, el ruido y los silencios
+//   node memory.mjs --cortex [--cliente] [--salida <carpeta>] [--idioma es|en|pt|fr|de|it]   la memoria en un HTML local, sin red
 // Dimensiones: «familia.tema» libre (identidad.nombre, proyecto.stack, preferencia.gestor-paquetes, restriccion.presupuesto…).
 // Un valor nuevo en la misma dimensión SUSTITUYE al anterior (queda en el histórico); objetivo.*, pendiente.*, nota.*,
 // hecho.* y aprendizaje.* acumulan. --duda: el usuario no lo afirmó del todo («creo que…»): se guarda sin sustituir.
@@ -20,17 +20,32 @@ import { pathToFileURL, fileURLToPath } from 'node:url';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
+// F14: flags en inglés (primarios) con alias en castellano. Se normalizan a la forma interna (castellano) para no
+// tocar el resto del código; los flags en castellano siguen funcionando EXACTAMENTE igual.
+const ALIAS_FLAG = {
+    '--save': '--guardar', '--search': '--buscar', '--recall': '--recordar', '--context': '--contexto',
+    '--list': '--lista', '--forget': '--olvidar', '--resolve': '--resolver', '--abandon': '--abandonar',
+    '--open': '--abiertos', '--in-progress': '--en-curso', '--doubt': '--duda', '--source': '--fuente',
+    '--value': '--valor', '--keys': '--claves', '--scope': '--alcance', '--lang': '--idioma',
+    '--history': '--historico', '--since': '--desde', '--until': '--hasta', '--days': '--dias',
+    '--limit': '--limite', '--budget': '--presupuesto', '--reason': '--motivo', '--link': '--enlazar',
+    '--links': '--enlaces', '--client': '--cliente', '--text': '--texto', '--report': '--informe',
+    '--output': '--salida', '--all': '--todo', '--none': '--nada', '--as': '--como',
+};
+const ALIAS_VAL = { user: 'usuario', project: 'proyecto', agent: 'agente' };   // valores de enum en inglés
+for (let i = 0; i < args.length; i++) if (ALIAS_FLAG[args[i]]) args[i] = ALIAS_FLAG[args[i]];
+for (let i = 0; i < args.length; i++) if ((args[i] === '--alcance' || args[i] === '--fuente') && ALIAS_VAL[args[i + 1]]) args[i + 1] = ALIAS_VAL[args[i + 1]];
 const opt = n => { const i = args.indexOf(n); return i >= 0 ? (args[i + 1] !== undefined && !args[i + 1].startsWith('--') ? args[i + 1] : true) : null; };
 const rutaPedida = String(opt('--path') && opt('--path') !== true ? opt('--path') : process.env.CLAUDE_PROJECT_DIR || process.cwd());
 let root = path.resolve(rutaPedida);   // provisional: para encontrar el motor; abajo, normalizada como en los hooks
 const out = s => process.stdout.write(s + '\n');
 
-async function motor() {   // hechos.mjs de los hooks: junto a la skill (plugin o .claude), o en el paquete de Senzu
+async function motor() {   // facts.mjs de los hooks: junto a la skill (plugin o .claude), o en el paquete de Senzu
     const marcador = (() => { try { return JSON.parse(fs.readFileSync(path.join(root, 'senzu', 'senzu.json'), 'utf8')); } catch { return {}; } })();
-    const c = [path.join(AQUI, '..', 'src', 'hechos.mjs'), path.join(AQUI, '..', '..', '..', 'hooks', 'hechos.mjs'), path.join(root, '.claude', 'hooks', 'hechos.mjs'),
-        marcador.standardsRoot && path.join(marcador.standardsRoot, 'core', 'hooks', 'hechos.mjs'), process.env.SENZU_HOME && path.join(process.env.SENZU_HOME, 'core', 'hooks', 'hechos.mjs')].filter(Boolean);
+    const c = [path.join(AQUI, '..', 'src', 'facts.mjs'), path.join(AQUI, '..', '..', '..', 'hooks', 'facts.mjs'), path.join(root, '.claude', 'hooks', 'facts.mjs'),
+        marcador.standardsRoot && path.join(marcador.standardsRoot, 'core', 'hooks', 'facts.mjs'), process.env.SENZU_HOME && path.join(process.env.SENZU_HOME, 'core', 'hooks', 'facts.mjs')].filter(Boolean);
     for (const f of c) if (fs.existsSync(f)) return import(pathToFileURL(f).href);
-    out('No encuentro el motor de hechos de Senzu (hooks/hechos.mjs). ¿Está instalado? /instalar');
+    out('No encuentro el motor de hechos de Senzu (hooks/facts.mjs). ¿Está instalado? /instalar');
     process.exit(2);
 }
 const m = await motor();
@@ -162,5 +177,5 @@ if (opt('--cortex')) {   // Cortex: la memoria en un HTML local, sin red; --clie
     if (!cliente) out('  Tiene datos privados: para enseñarlo, genera la vista para el cliente con --cortex --cliente.');
     process.exit(0);
 }
-out('Uso: --guardar --dimension <familia.tema> --valor <texto> [--claves a,b] [--alcance usuario] [--duda] | --buscar <consulta> [--historico] | --contexto | --lista [--todo] | --olvidar <id> | --cortex [--cliente] [--salida <carpeta>]');
+out('Usage: --save --dimension <family.topic> --value <text> [--keys a,b] [--scope user] [--doubt] | --search <query> [--history] | --context | --list [--all] | --forget <id> | --cortex [--client] [--output <dir>]');
 process.exit(2);

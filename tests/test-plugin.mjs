@@ -43,7 +43,7 @@ const pre = (hooks.PreToolUse || []).map(g => g.matcher).join('|');
 ok(/apply_patch/.test(pre), 'PreToolUse acepta apply_patch (Codex)', pre);
 
 // los .mjs del nucleo estan copiados (hooks + dependencias de mismo directorio)
-for (const f of ['session-start.mjs', 'memoria-viva.mjs', 'recuerdo-vivo.mjs', 'memoria-archivo.mjs', 'hechos-guard.mjs', 'estado-sesion.mjs', 'session-end.mjs', 'hechos.mjs', 'host.mjs', 'lib.mjs', 'messages.mjs']) {
+for (const f of ['session-start.mjs', 'live-memory.mjs', 'live-recall.mjs', 'file-memory.mjs', 'facts-guard.mjs', 'session-state.mjs', 'session-end.mjs', 'facts.mjs', 'host.mjs', 'lib.mjs', 'messages.mjs']) {
     ok(fs.existsSync(path.join(dir, 'hooks', f)), `copiado hooks/${f}`);
 }
 // cada comando apunta a un fichero que existe en el paquete

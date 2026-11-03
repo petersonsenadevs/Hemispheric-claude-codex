@@ -35,11 +35,11 @@ const log = s => process.stdout.write(s + '\n');
 // El conjunto de hooks de CEREBRO (sin el método Senzu: ni router, ni guards, ni skill-reminders).
 const HOOKSET = {
     SessionStart:     [{ files: ['session-start.mjs'] }],
-    UserPromptSubmit: [{ files: ['memoria-viva.mjs', 'recuerdo-vivo.mjs'] }],
-    PreToolUse:       [{ matcher: 'Edit|Write|MultiEdit|NotebookEdit|apply_patch', files: ['memoria-archivo.mjs'] }],
-    PostToolUse:      [{ matcher: 'Edit|Write|MultiEdit|apply_patch', files: ['hechos-guard.mjs'] },
-                       { matcher: 'Bash|PowerShell', files: ['hechos-guard.mjs'] }],
-    Stop:             [{ files: ['estado-sesion.mjs', 'hechos-guard.mjs'] }],
+    UserPromptSubmit: [{ files: ['live-memory.mjs', 'live-recall.mjs'] }],
+    PreToolUse:       [{ matcher: 'Edit|Write|MultiEdit|NotebookEdit|apply_patch', files: ['file-memory.mjs'] }],
+    PostToolUse:      [{ matcher: 'Edit|Write|MultiEdit|apply_patch', files: ['facts-guard.mjs'] },
+                       { matcher: 'Bash|PowerShell', files: ['facts-guard.mjs'] }],
+    Stop:             [{ files: ['session-state.mjs', 'facts-guard.mjs'] }],
     SessionEnd:       [{ files: ['session-end.mjs'] }],
 };
 
@@ -122,7 +122,7 @@ function asegurarDir(dir) {
 }
 
 function run() {
-    if (!fs.existsSync(path.join(SRC, 'hechos.mjs'))) { log(`Core not found in ${SRC}. Run install.mjs from the Hemispheric repo.`); process.exit(2); }
+    if (!fs.existsSync(path.join(SRC, 'facts.mjs'))) { log(`Core not found in ${SRC}. Run install.mjs from the Hemispheric repo.`); process.exit(2); }
 
     // Modo empaquetar plugin (Claude/Codex): no toca settings.json; genera un plugin autocontenido en <dir>.
     const destinoPlugin = opt('--plugin');

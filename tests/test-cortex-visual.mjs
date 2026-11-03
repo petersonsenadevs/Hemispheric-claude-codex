@@ -18,7 +18,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const base = fs.mkdtempSync(path.join(os.tmpdir(), 'cortex-vis-'));
 process.env.SENZU_MEMORIA_USUARIO = path.join(base, 'usuario', 'memoria.md');
 
-const m = await import(pathToFileURL(path.join(ROOT, 'src', 'hechos.mjs')).href);
+const m = await import(pathToFileURL(path.join(ROOT, 'src', 'facts.mjs')).href);
 const { htmlCortex } = await import(pathToFileURL(path.join(ROOT, 'cortex', 'cortex.mjs')).href);
 
 // ---- cargar Playwright: env explícito, o rutas habituales, o se omite ----

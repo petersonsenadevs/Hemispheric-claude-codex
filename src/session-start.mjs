@@ -6,7 +6,7 @@ import path from 'node:path';
 import {
     readHookInput, projectRoot, getMarker, gitBranch, gitDirty, gitCambios, designSystemMaster, planStatus, todayDevlog, devlogNextNumber, hookConfig, outHookJson, todayStr, pad3, detectVersions, eolWarnings, projectMaturity, bloqueMemoria, proximosPasos, ruta, rutaRel, textoLogos, logosSinRegistrar, bloqueMemoriaUsuario, revisarMemoria, leerUltimaSesion, ramaProtegida, siguientePaso, estadoVersion, rutaBuscador,
 } from './lib.mjs';
-import { contextoHechos, decisionesObsoletas, abiertos, FAMILIAS_CICLO, contradicciones, mapaMemoria, textoMapa } from './hechos.mjs';
+import { contextoHechos, decisionesObsoletas, abiertos, FAMILIAS_CICLO, contradicciones, mapaMemoria, textoMapa } from './facts.mjs';
 import { reclamarInyeccion } from './host.mjs';
 
 const p = readHookInput() || {};
@@ -121,7 +121,7 @@ try {
         }
     }
     for (const o of decisionesObsoletas(root)) L.push(`- AVISO de memoria: ${o.decision} cita ${citar(o.valorViejo)}, pero ${o.dimension} ahora es ${citar(o.valorNuevo)}. Propón actualizar esa decisión.`);
-    const cli = rutaBuscador(root).replace(/buscar\.mjs$/, 'memoria.mjs');
+    const cli = rutaBuscador(root).replace(/buscar\.mjs$/, 'memory.mjs');
     // X-T6: lo que choca en la memoria se pregunta al usuario (en su idioma) en cuanto venga al caso
     for (const c of contradicciones(root)) {
         if (c.tipo === 'valores') L.push(`- CONTRADICCIÓN en la memoria (pregunta al usuario cuál vale): ${c.dimension} = ${c.hechos.map(h => `${citar(h.valor)}${h.estado === 'dudoso' ? ' (dudoso)' : ''} [${h.id}]`).join(' y ')}. Si vale uno, vuelve a guardarlo (sustituye al otro); si ninguno, node ${cli} --olvidar <id>.`);

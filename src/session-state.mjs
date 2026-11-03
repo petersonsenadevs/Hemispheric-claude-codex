@@ -11,7 +11,7 @@ import {
     readHookInput, projectRoot, sessionFlag, testOnce, editadosSesion, gitCambios, gitBranch, planStatus,
     devlogEntradas, readText, rutaEstado, memoriaProyecto, rutaMemoriaUsuario, ruta, rutaRel,
 } from './lib.mjs';
-import { todosLosHechos, marcarUsoSesion, textosDelAgente, rutaBuscador, rutaUso } from './hechos.mjs';   // la de hechos.mjs: ruta REAL junto al hook
+import { todosLosHechos, marcarUsoSesion, textosDelAgente, rutaBuscador, rutaUso } from './facts.mjs';   // la de facts.mjs: ruta REAL junto al hook
 
 const p = readHookInput() || {};
 const root = projectRoot();
@@ -56,7 +56,7 @@ try { marcarUsoSesion(root, sid, p.transcript_path ? textosDelAgente(p.transcrip
 if (evento === 'Stop') try {
     const dir = ruta(root, 'cortex'), mt = f => { try { return fs.statSync(f).mtimeMs; } catch { return 0; } };
     const fuentes = Math.max(mt(path.join(ruta(root, 'memoria'), 'hechos.jsonl')), mt(path.join(ruta(root, 'devlog'), 'MEMORIA.md')), mt(path.join(ruta(root, 'devlog'), 'INDEX.md')), mt(rutaUso(root)));   // X-T10: también lo que ha consultado (cómo piensa)
-    const cli = rutaBuscador(root).replace(/buscar\.mjs$/, 'memoria.mjs');
+    const cli = rutaBuscador(root).replace(/buscar\.mjs$/, 'memory.mjs');
     for (const [archivo, extra] of [['index.html', []], ['cliente.html', ['--cliente']]]) {
         const f = path.join(dir, archivo);
         if (!fs.existsSync(f) || mt(f) >= fuentes || !fs.existsSync(cli)) continue;

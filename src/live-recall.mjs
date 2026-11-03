@@ -8,10 +8,10 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { readHookInput, projectRoot, sessionFlag, outHookJson, esMensajeDelUsuario } from './lib.mjs';
 import { reclamarInyeccion } from './host.mjs';
-import { recuerdo, palabras, palabraConPeso, UMBRAL_RECUERDO, anotarUso, apuntarInyeccion, mapaMemoria, textoMapa, rutaBuscador, intencionTemporal } from './hechos.mjs';
+import { recuerdo, palabras, palabraConPeso, UMBRAL_RECUERDO, anotarUso, apuntarInyeccion, mapaMemoria, textoMapa, rutaBuscador, intencionTemporal } from './facts.mjs';
 
 // Umbrales (se afinan con la evaluación de F4). Hechos: BM25 del motor (IDF suavizado, escala estable). Memoria y
-// devlog: los puntos de buscar.mjs dependen del tamaño del devlog (0,7 en uno pequeño, 38 en uno grande), así que el
+// devlog: los puntos de search.mjs dependen del tamaño del devlog (0,7 en uno pequeño, 38 en uno grande), así que el
 // umbral es RELATIVO al mejor de su fuente; el buscador ya no devuelve nada si no hay relación.
 const UMBRAL_HECHO = UMBRAL_RECUERDO, RELATIVO = 0.5, MAXIMO = 5;   // el de hechos, compartido con la evaluación
 
@@ -46,7 +46,7 @@ const elegidos = todos
 if (elegidos.length || !todos.some(x => (x.fuente === 'hecho' ? x.puntuacion >= UMBRAL_HECHO : x.puntuacion > 0))) apuntarInyeccion(root, { sid, origen: 'mensaje', consulta, items: elegidos });
 // X-T9: el agente no sabe qué hay si nadie se lo dice. Sin nada que coincida, con un mensaje con contenido (2+ palabras
 // con peso), una línea: lo que tiene la memoria y cómo consultarla (es un índice, no datos inventados)
-const cli = (() => { try { return (rutaBuscador(root) || '').replace(/buscar\.mjs$/, 'memoria.mjs'); } catch { return ''; } })();
+const cli = (() => { try { return (rutaBuscador(root) || '').replace(/buscar\.mjs$/, 'memory.mjs'); } catch { return ''; } })();
 if (!elegidos.length) {
     // (solo si de verdad no coincide NADA: si coincidía algo ya dicho en la sesión, decir «no hay nada» sería falso)
     const nada = !todos.some(x => (x.fuente === 'hecho' ? x.puntuacion >= UMBRAL_HECHO : x.puntuacion > 0));

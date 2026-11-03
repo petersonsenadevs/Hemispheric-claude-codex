@@ -16,7 +16,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const HOOKS = process.env.SENZU_HOOKS_DIR || path.join(ROOT, 'src');
 const base = fs.mkdtempSync(path.join(os.tmpdir(), 'senzu-par-'));
 process.env.SENZU_MEMORIA_USUARIO = path.join(base, 'usuario', 'memoria.md');   // aislada; igual para los 3 anfitriones
-const m = await import(pathToFileURL(path.join(HOOKS, 'hechos.mjs')).href);
+const m = await import(pathToFileURL(path.join(HOOKS, 'facts.mjs')).href);
 
 let casos = 0, fallos = 0;
 const ok = (c, n, d = '') => { casos++; if (!c) { fallos++; process.stdout.write(`FAIL ${n}${d ? ' -> ' + d : ''}\n`); } };
@@ -65,7 +65,7 @@ const CONSULTAS = {
 for (const [lang, prompt] of Object.entries(CONSULTAS)) {
     const sid = base => `pv-${RUN}-${lang}-${base}`;
     const outs = Object.keys(ANFITRIONES).map(a =>
-        [a, correr('recuerdo-vivo.mjs', a, { session_id: sid(a), hook_event_name: 'UserPromptSubmit', prompt })]);
+        [a, correr('live-recall.mjs', a, { session_id: sid(a), hook_event_name: 'UserPromptSubmit', prompt })]);
     const ref = outs[0][1];
     ok(ref.includes('Valencia'), `recall ${lang}: recupera el hecho (no vacío)`, ref.slice(0, 80));
     for (const [a, o] of outs.slice(1)) ok(o === ref, `recall ${lang}: ${a} idéntico a ${outs[0][0]}`, `len ${o.length} vs ${ref.length}`);

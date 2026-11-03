@@ -2,7 +2,7 @@
 // Frontera del núcleo en su propio repo (Hemispheric, F10-T1): src/ contiene SOLO el núcleo + base (cerebro), sin
 // método Senzu, y ningún fichero de src/ importa fuera de src/. Es el gate que garantiza que el carve-out quedó
 // limpio y autocontenido. Sin red, sin LLM, determinista.
-//   node tests/test-frontera.mjs
+//   node tests/test-boundary.mjs
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,8 +10,8 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'src');
 // El núcleo portable: motor + base + host + hooks de cerebro. Nada de método Senzu (guards, router, reminders…).
-const NUCLEO = ['hechos', 'host', 'lib', 'messages', 'session-end',
-    'recuerdo-vivo', 'session-start', 'estado-sesion', 'memoria-viva', 'memoria-archivo', 'hechos-guard'];
+const NUCLEO = ['facts', 'host', 'lib', 'messages', 'session-end',
+    'live-recall', 'session-start', 'session-state', 'live-memory', 'file-memory', 'facts-guard'];
 
 let casos = 0, fallos = 0;
 const ok = (c, n, d = '') => { casos++; if (!c) { fallos++; process.stdout.write(`FAIL ${n}${d ? ' -> ' + d : ''}\n`); } };

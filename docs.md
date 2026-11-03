@@ -1,78 +1,77 @@
-# Hemispheric — Documentación
+# Hemispheric — Documentation
 
-> **Tu agente, con memoria propia — y que nunca sale de tu máquina.**
+> **Your agent, with a memory of its own — and it never leaves your machine.**
 >
-> Para desarrolladores que usan agentes de IA (Claude Code, Codex) y están hartos de que **olviden todo** entre
-> sesiones, Hemispheric es una **memoria determinista** que vive en un archivo local que tú controlas —sin embeddings,
-> sin servidor, sin API keys—. A diferencia de las memorias en la nube (mem0, Zep), **la tuya no sale de tu máquina**.
+> For developers who use AI coding agents (Claude Code, Codex) and are tired of them **forgetting everything** between
+> sessions, Hemispheric is a **deterministic memory** that lives in a local file you control — no embeddings, no server,
+> no API keys. Unlike cloud memories (mem0, Zep), **yours never leaves your machine**.
 
-Esta es la documentación narrativa (la misma que la web `/docs`). Para la referencia rápida de estructura y comandos,
-ver el [`README.md`](./README.md).
+This is the narrative documentation (the same as the website `/docs`). For the quick reference of structure and
+commands, see the [`README.md`](./README.md).
 
-## Qué es
+## What it is
 
-Los agentes olvidan todo entre sesiones. Hemispheric es la memoria que **recuerda** a su gente y sus proyectos, en un
-solo archivo local que posees. Es **determinista** (misma entrada, mismo resultado), **offline** (sin red) y **sin
-dependencias**. A diferencia de las memorias en la nube, la tuya sigue siendo tuya.
+Agents forget everything between sessions. Hemispheric is the memory that **remembers** your people and your projects,
+in a single local file you own. It is **deterministic** (same input, same result), **offline** (no network) and
+**zero-dependency**. Unlike cloud memories, yours stays yours.
 
-## Instalar
+## Install
 
-En Claude Code, desde la raíz del proyecto:
+In Claude Code, from the project root:
 
 ```
-node install.mjs                 # registra los hooks en .claude/settings.json del proyecto
-node install.mjs --global        # para todos los proyectos (~/.claude/settings.json)
-node install.mjs --uninstall     # quita los hooks de Hemispheric (deja intacto lo demás)
-node install.mjs --dry-run       # enseña lo que haría, sin escribir
+npx hemispheric install --claude     # register the hooks in the project's .claude/settings.json
+npx hemispheric install --global     # for every project (~/.claude/settings.json)
+npx hemispheric uninstall            # remove Hemispheric's hooks (leaves everything else intact)
+npx hemispheric install --dry-run    # show what it would do, without writing
 ```
 
-Merge-safe (no pisa tus hooks ni tus permisos) e idempotente. Crea `.hemispheric/` (memoria del proyecto) y, si se
-pide, `~/.config/hemispheric/` (memoria global del usuario).
+Merge-safe (it never overwrites your hooks or permissions) and idempotent. It creates `.hemispheric/` (project memory)
+and, if requested, `~/.config/hemispheric/` (global user memory).
 
-**Codex**: la instalación la hace el usuario desde la app de Codex (vía plugin), no desde la CLI. El agente no instala
-en Codex.
+**Codex**: the user installs it from the Codex app (via plugin), not from the CLI. The agent does not install on Codex.
 
-## Cómo funciona
+## How it works
 
-1. **Captura.** Un hook `PostToolUse` lee cada intercambio y extrae hechos (decisiones, rutas, contexto del proyecto).
-2. **Guardado.** Cada hecho cae en un grafo local ligero con su nombre, fecha y enlaces. Toda la Cortex es un archivo.
-3. **Recuerdo.** Una consulta activa el nodo que coincide y se extiende un salto (activación a dos saltos), sacando a
-   flote los hechos relacionados — sin búsqueda semántica ni modelo de embeddings. Al instante.
+1. **Capture.** A `PostToolUse` hook reads each exchange and extracts facts (decisions, paths, project context).
+2. **Store.** Each fact lands in a lightweight local graph with its name, date and links. The whole Cortex is one file.
+3. **Retrieve.** A query activates the matching node and spreads one hop out (two-hop activation), surfacing related
+   facts — no semantic search, no embedding model. Instant.
 
-## La Cortex
+## The Cortex
 
-La Cortex dibuja todo lo que tu agente sabe como un **cerebro de puntos** —un brillo por hecho—. Cada tipo de memoria
-se asienta en su zona (decisiones, objetivos, hechos del proyecto, quién eres, lo vivido). Al buscar un dato se
-encienden solo su nodo y sus conexiones, como una neurona disparándose. No es una foto: es una lectura de la memoria
-que el agente usa de verdad. Se genera con `node cli/memoria.mjs --cortex` (HTML local, sin red).
+The Cortex draws everything your agent knows as a **brain of points** — one glow per fact. Each kind of memory settles
+in its own zone (decisions, goals, project facts, who you are, what was lived). Search a fact and only its node and
+connections light up, like a neuron firing. It is not a picture: it is a readout of the memory the agent actually uses.
+Generate it with `node cli/memory.mjs --cortex` (local HTML, no network).
 
-## Anfitriones
+## Hosts
 
-El motor detecta dónde corre y se adapta; la memoria es la misma por debajo.
+The engine detects where it runs and adapts; the memory is the same underneath.
 
-- **Claude Code** — los hooks se registran en los ajustes del proyecto; captura tras cada llamada de herramienta.
-- **Codex** — corre por la vía de plugin; el mismo cerebro, el mismo archivo local.
-- **Standalone** — una CLI simple para cualquier proyecto: lee, escribe y busca la memoria directamente.
+- **Claude Code** — the hooks register in the project settings; capture after every tool call.
+- **Codex** — runs through the plugin path; the same brain, the same local file.
+- **Standalone** — a plain CLI for any project: read, write and search the memory directly.
 
-## Licencia
+## License
 
-Uso **personal y no comercial gratis** bajo **PolyForm Noncommercial 1.0.0**. Cero telemetría — tu memoria vive en
-archivos locales que posees. Usar Hemispheric dentro de una empresa o un producto de pago necesita una **licencia
-comercial**: ver [`COMMERCIAL.md`](./COMMERCIAL.md) (petersonsena24@gmail.com). © 2026 Peterson Sena.
+**Free for personal and noncommercial use** under **PolyForm Noncommercial 1.0.0**. Zero telemetry — your memory lives
+in local files you own. Using Hemispheric inside a company or a paid product needs a **commercial license**: see
+[`COMMERCIAL.md`](./COMMERCIAL.md) (petersonsena24@gmail.com). © 2026 Peterson Sena.
 
 ## FAQ
 
-**¿Mis datos salen de mi máquina?** No. La memoria es un archivo local que posees. Sin servidor, sin nube, sin API
-key, sin telemetría. Funciona entera offline.
+**Does my data ever leave my machine?** No. The memory is a local file you own. No server, no cloud, no API key, no
+telemetry. It runs entirely offline.
 
-**¿En qué se diferencia de mem0 o Zep?** Esos guardan tu memoria en su nube tras una API. Hemispheric lo mantiene todo
-local y determinista — misma entrada, mismo resultado, sin embeddings ni base vectorial.
+**How is this different from mem0 or Zep?** Those store your memory in their cloud behind an API. Hemispheric keeps
+everything local and deterministic — same input, same result, no embeddings or vector database.
 
-**¿Necesito un modelo de embeddings o una base vectorial?** No. Los hechos se guardan en un grafo local ligero y se
-recuperan por nombre, fecha y relevancia con activación a dos saltos.
+**Do I need an embedding model or a vector database?** No. Facts are stored in a lightweight local graph and retrieved
+by name, date and relevance with two-hop activation.
 
-**¿Con qué agentes funciona?** Claude Code y Codex hoy, más una CLI standalone. El motor detecta su anfitrión y se
-adapta; la memoria es la misma por debajo.
+**Which agents does it work with?** Claude Code and Codex today, plus a standalone CLI. The engine detects its host and
+adapts; the memory is the same underneath.
 
-**¿Es gratis?** Gratis para uso personal y no comercial (PolyForm Noncommercial). Dentro de una empresa o un producto
-de pago necesita licencia comercial.
+**Is it free?** Free for personal and noncommercial use (PolyForm Noncommercial). Inside a company or a paid product it
+needs a commercial license.

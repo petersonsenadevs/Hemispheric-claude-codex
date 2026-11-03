@@ -477,13 +477,13 @@ export function tieneContenido(seccion) {   // ¿hay algo más que "…", "—" 
 }
 
 export function rutaBuscador(root) {   // ruta del buscador del devlog, la instalada en el proyecto o la del plugin
-    const rel = ['.claude/skills', '.agents/skills'].map(d => `${d}/devlog/scripts/buscar.mjs`).find(r => fs.existsSync(path.join(root, r)));
+    const rel = ['.claude/skills', '.agents/skills'].map(d => `${d}/devlog/scripts/search.mjs`).find(r => fs.existsSync(path.join(root, r)));
     if (rel) return rel;
     if (process.env.CLAUDE_PLUGIN_ROOT) {
-        const p = path.join(process.env.CLAUDE_PLUGIN_ROOT, 'skills', 'devlog', 'scripts', 'buscar.mjs');
+        const p = path.join(process.env.CLAUDE_PLUGIN_ROOT, 'skills', 'devlog', 'scripts', 'search.mjs');
         if (fs.existsSync(p)) return p.replace(/\\/g, '/');
     }
-    return '<skills-dir>/devlog/scripts/buscar.mjs';
+    return '<skills-dir>/devlog/scripts/search.mjs';
 }
 
 // Líneas de contexto con la memoria del proyecto (session-start y pre-compact)

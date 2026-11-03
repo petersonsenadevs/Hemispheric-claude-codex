@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// Suite del motor de HECHOS (core/hooks/hechos.mjs + devlog/scripts/memoria.mjs), devlog 098:
+// Suite del motor de HECHOS (core/hooks/facts.mjs + devlog/scripts/memory.mjs), devlog 098:
 // memoria determinista en CUALQUIER idioma y sin red: guardar, no duplicar, sustituir por dimensión, dudas,
 // validez en el tiempo, histórico, buscar con erratas y entre idiomas (claves), cupos por familia, alcance del
 // usuario, olvidar, y que la misma entrada dé siempre la misma salida.
-//   node tools/test-hechos.mjs
+//   node tools/test-facts.mjs
 
 import fs from 'node:fs';
 import os from 'node:os';
@@ -14,8 +14,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const base = fs.mkdtempSync(path.join(os.tmpdir(), 'senzu-hechos-'));
 process.env.SENZU_MEMORIA_USUARIO = path.join(base, 'usuario', 'memoria.md');   // la memoria del usuario, aislada
-const m = await import(pathToFileURL(path.join(ROOT, 'src', 'hechos.mjs')).href);
-const CLI = path.join(ROOT, 'cli', 'memoria.mjs');
+const m = await import(pathToFileURL(path.join(ROOT, 'src', 'facts.mjs')).href);
+const CLI = path.join(ROOT, 'cli', 'memory.mjs');
 let casos = 0, fallos = 0;
 const ok = (c, n, d = '') => { casos++; if (!c) { fallos++; process.stdout.write(`FAIL ${n}${d ? ' -> ' + d : ''}\n`); } };
 const proyecto = n => { const d = path.join(base, n); fs.mkdirSync(path.join(d, 'senzu'), { recursive: true }); fs.writeFileSync(path.join(d, 'senzu', 'senzu.json'), '{}'); return d; };
@@ -598,7 +598,7 @@ ok(!obs.some(o => o.decision === 'D-004'), 'una palabra corta y común («sí»)
 ok(!obs.some(o => o.decision === 'D-005'), 'si la decisión ya cita también el valor nuevo, no avisa', ids);
 ok(!obs.some(o => o.decision === 'D-003'), 'un valor nuevo que PRECISA al viejo («Hetzner» → «Hetzner Cloud») no deja obsoleta la decisión', ids);
 ok(obs.every(o => /^D-00[12]$/.test(o.decision)), 'solo mira «Decisiones vigentes» (no «Lo que no funcionó»)', ids);
-const mc = spawnSync(process.execPath, [path.join(ROOT, 'cli', 'memoria-check.mjs')], { cwd: O, encoding: 'utf8', env: process.env });
+const mc = spawnSync(process.execPath, [path.join(ROOT, 'cli', 'memory-check.mjs')], { cwd: O, encoding: 'utf8', env: process.env });
 ok(mc.status === 1 && /D-001 cita «Laravel 10», pero el hecho proyecto\.stack ahora es «Laravel 11»/.test(mc.stdout), 'memoria-check lo enseña como aviso', mc.stdout);
 
 // 8. la línea de comandos

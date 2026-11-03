@@ -1,9 +1,9 @@
 // Cortex (F7-T3/T4): la memoria del proyecto como un HTML local, autocontenido y sin red, con el diseño elegido en las
 // rondas (plan/design-system/cortex/MASTER.md: «Nocturno» + 2D «Neón de línea» + 3D de puntos con giro libre).
-// Lo usa `memoria.mjs --cortex [--cliente] [--idioma xx]`; los datos salen de hechos.mjs → datosCortex() (con --cliente,
+// Lo usa `memory.mjs --cortex [--cliente] [--idioma xx]`; los datos salen de facts.mjs → datosCortex() (con --cliente,
 // lo privado ni siquiera entra en el archivo). Todo texto de la memoria se pinta con textContent: nunca como HTML.
-// La interfaz habla el idioma del navegador (o el de --idioma, o el que se elija): textos en cortex-textos.mjs.
-import { TEXTOS } from './cortex-textos.mjs';
+// La interfaz habla el idioma del navegador (o el de --idioma, o el que se elija): textos en cortex-text.mjs.
+import { TEXTOS } from './cortex-text.mjs';
 
 // ---------------------------------------------------------------- 2D: vista lateral (delante a la izquierda)
 // Frontal y parietal separados por el surco central; el temporal, por debajo de la cisura de Silvio (con aire); el
