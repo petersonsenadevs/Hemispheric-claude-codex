@@ -1,17 +1,45 @@
 {
   "name": "hemispheric",
   "version": "0.1.0",
-  "private": true,
-  "description": "Memoria determinista, offline y sin dependencias para agentes de IA (Claude Code, Codex), Obsidian y standalone.",
+  "description": "Deterministic, offline, zero-dependency memory for AI coding agents (Claude Code, Codex) and a standalone CLI.",
   "type": "module",
   "bin": {
     "hemispheric": "cli/hemispheric.mjs"
   },
+  "files": [
+    "src/",
+    "cli/",
+    "cortex/",
+    "install.mjs",
+    "docs.md",
+    "COMMERCIAL.md"
+  ],
   "scripts": {
     "test": "node tests/test-boundary.mjs && node tests/test-facts.mjs && node tests/test-hard-recall.mjs && node tests/test-install.mjs && node tests/test-plugin.mjs && node tests/test-parity.mjs && node tests/test-cortex-visual.mjs"
   },
   "engines": {
     "node": ">=18"
   },
-  "license": "SEE LICENSE IN LICENSE"
+  "keywords": [
+    "memory",
+    "ai",
+    "agent",
+    "llm",
+    "claude-code",
+    "codex",
+    "offline",
+    "deterministic",
+    "local-first",
+    "no-embeddings"
+  ],
+  "author": "Peterson Sena",
+  "license": "SEE LICENSE IN LICENSE",
+  "homepage": "https://gethemispheric.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/petersonsenadevs/Hemispheric-claude-codex.git"
+  },
+  "bugs": {
+    "url": "https://github.com/petersonsenadevs/Hemispheric-claude-codex/issues"
+  }
 }
