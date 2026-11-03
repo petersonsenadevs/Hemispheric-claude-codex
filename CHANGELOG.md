@@ -5,6 +5,13 @@ Format based on [Keep a Changelog](https://keepachangelog.com/); versions follow
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-11-03
+### Fixed
+- `LICENSE` now names **Corvusmem** (the rename had missed it — it was still "Hemispheric").
+- `repository`, `bugs` and the README crow image point to `petersonsenadevs/corvusmem`.
+### Added
+- Release flow: `test:core` (deterministic suites, no browser) + `preversion`/`prepublishOnly` gates, and this CHANGELOG.
+
 ## [0.1.0] — 2026-11-03
 ### Added
 - First public release: **deterministic, offline, zero-dependency memory** for AI coding agents (Claude Code, Codex) and a standalone CLI.
