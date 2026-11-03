@@ -38,6 +38,27 @@ and, if requested, `~/.config/hemispheric/` (global user memory).
 3. **Retrieve.** A query activates the matching node and spreads one hop out (two-hop activation), surfacing related
    facts — no semantic search, no embedding model. Instant.
 
+## The memory
+
+Think of it as a notebook your agent keeps for you — but it only writes down what is **stable**: decisions, the
+project's stack, who you are, your preferences, your goals. Passing chatter is ignored. When something changes, the new
+value **replaces** the old one (the old one is kept, dated, in the history), so your agent never works from something
+you already changed. Recall is deterministic: same question, same answer.
+
+There are two kinds of memory, and they never get mixed up:
+
+- **Project memory** — about the project (stack, client, decisions, deadlines). Lives in `.hemispheric/` in the project
+  folder, so the team and Codex share it. "The stack is Next" is true no matter who said it.
+- **Your memory** — about you (who you are, how you like to work), carried across every project. Lives on your machine
+  (`~/.config/hemispheric/`), private to you, never committed. Your agent recalls both at once.
+
+## Teams — one project, many people
+
+When several people work on the same project, the shared memory keeps each person's **personal** facts separate: if Ana
+prefers Vim and Bob prefers Emacs, both are kept and neither overwrites the other. Facts that describe the **project
+itself** (stack, decisions) stay shared and have no owner. You configure nothing — the author is read from your `git`
+email (or your system user), with no network. For a solo developer it's invisible; it just works.
+
 ## The Cortex
 
 The Cortex draws everything your agent knows as a **brain of points** — one glow per fact. Each kind of memory settles
