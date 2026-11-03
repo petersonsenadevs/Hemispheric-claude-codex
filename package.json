@@ -8,7 +8,7 @@
     "hemispheric": "cli/memoria.mjs"
   },
   "scripts": {
-    "test": "node tests/test-frontera.mjs && node tests/test-hechos.mjs && node tests/test-hard-recall.mjs && node tests/test-install.mjs && node tests/test-paridad.mjs && node tests/test-cortex-visual.mjs"
+    "test": "node tests/test-frontera.mjs && node tests/test-hechos.mjs && node tests/test-hard-recall.mjs && node tests/test-install.mjs && node tests/test-plugin.mjs && node tests/test-paridad.mjs && node tests/test-cortex-visual.mjs"
   },
   "engines": {
     "node": ">=18"

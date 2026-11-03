@@ -8,11 +8,13 @@
 //     --global          registra los hooks en el HOME (todos los proyectos) en vez de en el proyecto
 //     --uninstall       quita los hooks de Hemispheric (deja intacto lo demás)
 //     --dry-run         enseña lo que haría, sin escribir
+//     --plugin <dir>    empaqueta un PLUGIN autocontenido (Claude/Codex) en <dir> y sale (no toca settings.json)
 //
 // Claude: registra los hooks en .claude/settings.json (o ~/.claude/settings.json con --global), fusionando.
-// Codex: ejecuta los hooks por la vía de PLUGIN (marketplace en ~/.codex/config.toml, aprobados en hooks.state),
-//   no por un settings.json de proyecto. El instalador deja el MANIFIESTO portable (.hemispheric/hooks.json) que el
-//   empaquetado como plugin consumirá (F10-T4); aquí no se toca config.toml (no se inventa un formato sin verificar).
+// Codex: ejecuta los hooks por la vía de PLUGIN. Con `--plugin <dir>` se genera ese plugin en el MISMO formato que el
+//   plugin de Senzu que Codex ya consume: .claude-plugin/plugin.json + hooks/hooks.json (con ${CLAUDE_PLUGIN_ROOT}) +
+//   los .mjs del núcleo. El usuario lo publica en un marketplace de Codex, lo instala y aprueba los hooks en la app
+//   (quedan en ~/.codex/config.toml -> hooks.state). Sin --plugin, el instalador deja el manifiesto .hemispheric/hooks.json.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -43,6 +45,41 @@ const HOOKSET = {
 
 const cmdDe = file => `node "${path.join(SRC, file).replace(/\\/g, '/')}"`;   // runtime garantizado: node, rutas con /
 const esNuestro = cmd => typeof cmd === 'string' && cmd.includes(SRC.replace(/\\/g, '/'));   // nuestras entradas, por su ruta
+
+// Para EMPAQUETAR como plugin (Claude/Codex): el comando apunta al propio plugin, no a una ruta de la maquina.
+const cmdPlugin = file => `node "\${CLAUDE_PLUGIN_ROOT}/hooks/${file}"`;
+function gruposPlugin(ev) {
+    return HOOKSET[ev].map(g => {
+        const grp = {};
+        if (g.matcher) grp.matcher = g.matcher;
+        grp.hooks = g.files.map(f => ({ type: 'command', command: cmdPlugin(f), timeout: ev === 'SessionEnd' ? 5 : 30 }));
+        return grp;
+    });
+}
+
+// Empaqueta Hemispheric como PLUGIN autocontenido (mismo formato que el plugin de Senzu que Codex ya consume):
+// .claude-plugin/plugin.json + hooks/hooks.json (con ${CLAUDE_PLUGIN_ROOT}) + los .mjs del nucleo copiados a hooks/.
+// El usuario lo publica en un marketplace de Codex, lo instala y APRUEBA los hooks en la app (quedan en
+// ~/.codex/config.toml -> hooks.state). Vale igual como plugin de Claude.
+function empaquetarPlugin(destino) {
+    const dir = path.resolve(destino);
+    let pkg = {}; try { pkg = JSON.parse(fs.readFileSync(path.join(AQUI, 'package.json'), 'utf8')); } catch {}
+    if (DRY) { log(`  [dry-run] empaquetaria el plugin en ${dir}`); return; }
+    const hooksDir = path.join(dir, 'hooks');
+    fs.mkdirSync(hooksDir, { recursive: true });
+    fs.mkdirSync(path.join(dir, '.claude-plugin'), { recursive: true });
+    // 1) hooks.json en formato de plugin (CLAUDE_PLUGIN_ROOT), mismos eventos que el HOOKSET
+    const h = {}; for (const ev of Object.keys(HOOKSET)) h[ev] = gruposPlugin(ev);
+    fs.writeFileSync(path.join(hooksDir, 'hooks.json'), JSON.stringify({ hooks: h }, null, 2) + '\n');
+    // 2) los .mjs del nucleo (hooks + dependencias de mismo directorio: autocontenido, cero imports externos)
+    let n = 0;
+    for (const f of fs.readdirSync(SRC)) if (f.endsWith('.mjs')) { fs.copyFileSync(path.join(SRC, f), path.join(hooksDir, f)); n++; }
+    // 3) plugin.json
+    const plugin = { name: 'hemispheric', description: pkg.description || 'Memoria determinista, offline y sin dependencias para agentes de IA.', version: pkg.version || '0.0.0', author: { name: 'Peterson Sena' }, license: 'SEE LICENSE IN LICENSE' };
+    fs.writeFileSync(path.join(dir, '.claude-plugin', 'plugin.json'), JSON.stringify(plugin, null, 2) + '\n');
+    log(`  [plugin] ${dir}: .claude-plugin/plugin.json + hooks/hooks.json + ${n} .mjs`);
+    log('  Publicalo en un marketplace de Codex (como el de Senzu); el usuario lo instala y aprueba los hooks en la app.');
+}
 
 // Construye los grupos de hooks de un evento en el formato de settings.json de Claude.
 function gruposDe(ev) {
@@ -86,6 +123,16 @@ function asegurarDir(dir) {
 
 function run() {
     if (!fs.existsSync(path.join(SRC, 'hechos.mjs'))) { log(`No encuentro el núcleo en ${SRC}. ¿Ejecutas install.mjs desde el repo de Hemispheric?`); process.exit(2); }
+
+    // Modo empaquetar plugin (Claude/Codex): no toca settings.json; genera un plugin autocontenido en <dir>.
+    const destinoPlugin = opt('--plugin');
+    if (destinoPlugin && destinoPlugin !== true) {
+        log(`Hemispheric · empaquetar plugin (Claude/Codex)${DRY ? ' (dry-run)' : ''}`);
+        empaquetarPlugin(destinoPlugin);
+        log('Listo.');
+        return;
+    }
+
     const quitar = has('--uninstall');
     log(`Hemispheric · ${quitar ? 'desinstalar' : 'instalar'}${GLOBAL ? ' (global)' : ''}${DRY ? ' (dry-run)' : ''}`);
 
