@@ -615,6 +615,35 @@ ok(/Nada en la memoria/.test(cli(L, '--buscar', 'qwerty').stdout), 'CLI: sin res
 ok(/preferencia\.idioma-codigo/.test(cli(L, '--contexto').stdout), 'CLI: --contexto');
 ok(cli(L, '--guardar', '--dimension', 'x').status !== 0, 'CLI: sin valor no guarda');
 
+// 9. multiusuario (F14): en memoria de proyecto COMPARTIDA, los hechos personales no se pisan entre autores
+const MU = proyecto('multiusuario');
+m.guardarHecho(MU, { dimension: 'preferencia.editor', valor: 'vim', autor: 'ana@x', claves: ['editor'] }, { ahora: T(MU, 0) });
+r = m.guardarHecho(MU, { dimension: 'preferencia.editor', valor: 'emacs', autor: 'bob@x', claves: ['editor'] }, { ahora: T(MU, 1) });
+ok(r.accion === 'nuevo' && r.sustituidos.length === 0, 'multiusuario: la preferencia de Bob NO pisa la de Ana (distinto autor)', JSON.stringify(r.sustituidos));
+const vig = m.todosLosHechos(MU).filter(h => h.dimension === 'preferencia.editor' && h.estado === 'activo');
+ok(vig.length === 2 && vig.some(h => h.valor === 'vim' && h.autor === 'ana@x') && vig.some(h => h.valor === 'emacs' && h.autor === 'bob@x'), 'ambas preferencias coexisten, cada una con su autor', JSON.stringify(vig.map(h => [h.valor, h.autor])));
+// el mismo autor SÍ se sustituye a sí mismo
+r = m.guardarHecho(MU, { dimension: 'preferencia.editor', valor: 'neovim', autor: 'ana@x' }, { ahora: T(MU, 2) });
+ok(r.accion === 'sustituye' && r.sustituidos.some(h => h.valor === 'vim') && !r.sustituidos.some(h => h.valor === 'emacs'), 'el mismo autor (Ana) actualiza SOLO lo suyo, no lo de Bob', JSON.stringify(r.sustituidos.map(h => [h.valor, h.autor])));
+
+// legacy sin autor: lo adopta/sustituye cualquiera (antes del multiusuario había un solo autor) -> un solo dev queda limpio
+const LG = proyecto('legacy');
+const lgFile = path.join(LG, 'senzu', 'memoria', 'hechos.jsonl');
+fs.mkdirSync(path.dirname(lgFile), { recursive: true });
+fs.writeFileSync(lgFile, JSON.stringify({ id: 'h-legacy1', dimension: 'preferencia.editor', valor: 'nano', estado: 'activo', alcance: 'proyecto', fuente: 'usuario', creado: T(LG, 0) }) + '\n');
+r = m.guardarHecho(LG, { dimension: 'preferencia.editor', valor: 'vim', autor: 'ana@x' }, { ahora: T(LG, 10) });
+ok(r.accion === 'sustituye' && r.sustituidos.some(h => h.valor === 'nano'), 'legacy sin autor: un hecho con autor SÍ lo sustituye (caso de un solo dev, limpio)', JSON.stringify(r.sustituidos));
+
+// impersonal (proyecto.*): el dato es del proyecto, se sustituye aunque cambie el autor
+const IM = proyecto('impersonal');
+m.guardarHecho(IM, { dimension: 'proyecto.stack', valor: 'Next', autor: 'ana@x', claves: ['stack'] }, { ahora: T(IM, 0) });
+r = m.guardarHecho(IM, { dimension: 'proyecto.stack', valor: 'Astro', autor: 'bob@x', claves: ['stack'] }, { ahora: T(IM, 1) });
+ok(r.accion === 'sustituye' && r.sustituidos.some(h => h.valor === 'Next'), 'impersonal (proyecto.*): el stack se sustituye aunque cambie el autor', JSON.stringify(r.sustituidos));
+
+// CLI: --author (inglés) guarda y muestra el autor
+c = cli(L, '--save', '--dimension', 'preferencia.shell', '--value', 'zsh', '--author', 'carol@x');
+ok(c.status === 0 && /· de carol@x/.test(c.stdout), 'CLI: --author guarda y muestra el autor', c.stdout + c.stderr);
+
 fs.rmSync(base, { recursive: true, force: true });
 process.stdout.write(`Casos: ${casos}  Fallos: ${fallos}\n`);
 process.exit(fallos ? 1 : 0);

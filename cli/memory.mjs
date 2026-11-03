@@ -30,7 +30,7 @@ const ALIAS_FLAG = {
     '--history': '--historico', '--since': '--desde', '--until': '--hasta', '--days': '--dias',
     '--limit': '--limite', '--budget': '--presupuesto', '--reason': '--motivo', '--link': '--enlazar',
     '--links': '--enlaces', '--client': '--cliente', '--text': '--texto', '--report': '--informe',
-    '--output': '--salida', '--all': '--todo', '--none': '--nada', '--as': '--como',
+    '--output': '--salida', '--all': '--todo', '--none': '--nada', '--as': '--como', '--author': '--autor',
 };
 const ALIAS_VAL = { user: 'usuario', project: 'proyecto', agent: 'agente' };   // valores de enum en inglés
 for (let i = 0; i < args.length; i++) if (ALIAS_FLAG[args[i]]) args[i] = ALIAS_FLAG[args[i]];
@@ -45,13 +45,13 @@ async function motor() {   // facts.mjs de los hooks: junto a la skill (plugin o
     const c = [path.join(AQUI, '..', 'src', 'facts.mjs'), path.join(AQUI, '..', '..', '..', 'hooks', 'facts.mjs'), path.join(root, '.claude', 'hooks', 'facts.mjs'),
         marcador.standardsRoot && path.join(marcador.standardsRoot, 'core', 'hooks', 'facts.mjs'), process.env.SENZU_HOME && path.join(process.env.SENZU_HOME, 'core', 'hooks', 'facts.mjs')].filter(Boolean);
     for (const f of c) if (fs.existsSync(f)) return import(pathToFileURL(f).href);
-    out('No encuentro el motor de hechos de Senzu (hooks/facts.mjs). ¿Está instalado? /instalar');
+    out('No encuentro el motor de hechos (hooks/facts.mjs). ¿Está instalado? Ejecuta: npx hemispheric install');
     process.exit(2);
 }
 const m = await motor();
 root = m.rutaNativa ? m.rutaNativa(rutaPedida) : root;   // /c/… de Git Bash, C:/ o barra final → la misma carpeta
 const fecha = s => String(s || '').slice(0, 10);
-const linea = h => `- [${h.dimension}] ${h.valor}${h.estado !== 'activo' ? ` (${h.estado}${h.hasta ? ' ' + fecha(h.hasta) : ''})` : ''}${h.desde ? ` · desde ${fecha(h.desde)}` : ''}${h.devlog ? ` · ver ${h.devlog}` : ''} · ${h.alcance} · ${h.id}`;
+const linea = h => `- [${h.dimension}] ${h.valor}${h.estado !== 'activo' ? ` (${h.estado}${h.hasta ? ' ' + fecha(h.hasta) : ''})` : ''}${h.desde ? ` · desde ${fecha(h.desde)}` : ''}${h.autor ? ` · de ${h.autor}` : ''}${h.devlog ? ` · ver ${h.devlog}` : ''} · ${h.alcance} · ${h.id}`;
 
 if (opt('--guardar')) {
     let r;
@@ -61,6 +61,7 @@ if (opt('--guardar')) {
         devlog: opt('--devlog') && opt('--devlog') !== true ? String(opt('--devlog')) : undefined,   // por defecto, la entrada de hoy
         enlaces: opt('--enlaces') && opt('--enlaces') !== true ? String(opt('--enlaces')).split(',') : [],   // dimensiones relacionadas
         alcance: opt('--alcance') || 'proyecto', duda: !!opt('--duda'),
+        autor: opt('--autor') && opt('--autor') !== true ? String(opt('--autor')) : undefined,   // multiusuario (F14); si no, se autodetecta
         fuente: opt('--fuente') && opt('--fuente') !== true ? String(opt('--fuente')) : 'usuario',   // usuario | agente | devlog
         desde: opt('--desde') && opt('--desde') !== true ? new Date(opt('--desde')).toISOString() : undefined,
         hasta: opt('--hasta') && opt('--hasta') !== true ? new Date(opt('--hasta')).toISOString() : undefined,

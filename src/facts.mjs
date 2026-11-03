@@ -1,6 +1,6 @@
-// Motor de HECHOS de Senzu: memoria determinista en CUALQUIER idioma, sin red ni modelos (devlog 098).
-// Ideas tomadas de Hemispheric (dimensiones con sustitución, validez en el tiempo, deduplicación, cupos por familia,
-// motivo de cada resultado) y reescritas sin Postgres, Redis ni embeddings.
+// Motor de HECHOS de Hemispheric: memoria determinista en CUALQUIER idioma, sin red ni modelos (devlog 098).
+// Dimensiones con sustitución, validez en el tiempo, deduplicación, cupos por familia y motivo de cada resultado,
+// sin Postgres, Redis ni embeddings.
 // Reparto: el AGENTE (Claude o Codex) entiende el idioma y decide qué es un hecho y en qué dimensión va; este motor
 // lo guarda y lo recupera siempre igual: misma entrada, misma salida, en cualquier sistema.
 //   · dimensión: identificador libre normalizado («identidad.ubicacion», «preferencia.gestor-paquetes»). En las de un
@@ -13,12 +13,31 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import os from 'node:os';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { ruta, rutaMemoriaUsuario, rutaEstado } from './lib.mjs';
 export { rutaNativa } from './lib.mjs';   // para memory.mjs: --path con C:\, C:/ o /c/ de Git Bash → el mismo almacén
 
 export const FAMILIAS_VARIOS = /^(objetivo|pendiente|nota|hecho|enlace|aprendizaje)(\.|$)/;
+// Multiusuario (F14): familias PERSONALES (de la persona, no del proyecto). En memoria de proyecto COMPARTIDA, su
+// sustitución es por (dimensión, autor): la preferencia de Ana no pisa la de Bob. Las impersonales (proyecto,
+// restriccion) y las de VARIOS no miran el autor. Un hecho LEGACY sin autor lo puede adoptar/sustituir cualquiera
+// (antes del multiusuario había de hecho un solo autor), así el caso de un solo dev queda limpio.
+export const PERSONALES = /^(identidad|preferencia)(\.|$)/;
+const normAutor = s => String(s == null ? '' : s).trim().toLowerCase();
+// Autor determinista y sin red: HEMI_USER > git user.email del repo > usuario del SO.
+function autorActual(root, env = process.env) {
+    const forzado = normAutor(env.HEMI_USER);
+    if (forzado) return forzado;
+    try {
+        const r = spawnSync('git', ['-C', String(root || '.'), 'config', 'user.email'], { encoding: 'utf8' });
+        const g = r && r.status === 0 ? normAutor(r.stdout) : '';
+        if (g) return g;
+    } catch { /* sin git: se cae al usuario del SO */ }
+    try { const u = os.userInfo().username; if (u) return normAutor(u); } catch { /* ignore */ }
+    return 'unknown';
+}
 export function rutaHechos(root, alcance = 'proyecto') {
     return alcance === 'usuario' ? path.join(path.dirname(rutaMemoriaUsuario()), 'hechos.jsonl') : path.join(ruta(root, 'memoria'), 'hechos.jsonl');
 }
@@ -240,6 +259,9 @@ export function guardarHecho(root, entrada, { ahora = hoy() } = {}) {
     const dimension = conv.dimension;
     const alcance = entrada.alcance === 'usuario' ? 'usuario' : 'proyecto';
     const file = rutaHechos(root, alcance);
+    const esPersonal = PERSONALES.test(dimension);   // multiusuario: solo las personales se separan por autor
+    const autor = (entrada.autor != null && normAutor(entrada.autor)) ? normAutor(entrada.autor) : (esPersonal ? autorActual(root) : undefined);
+    const mismoAutor = h => !esPersonal || h.autor === autor || !h.autor;   // mismo autor o legacy sin autor
     const k = normalizar(valor);
     const propias = [].concat(entrada.claves || []).flatMap(c => String(c).split(',')).map(c => c.trim()).filter(Boolean);
     const claves = clavesConvencionales(conv.original ? [...propias, conv.original] : propias, dimension);
@@ -247,7 +269,7 @@ export function guardarHecho(root, entrada, { ahora = hoy() } = {}) {
     return conCerrojo(file, () => {
     const { validos: lista, ilegibles } = leerArchivo(file);
     const fuente = FUENTES.includes(entrada.fuente) ? entrada.fuente : 'usuario';
-    const igual = lista.find(h => h.dimension === dimension && normalizar(h.valor) === k && (h.estado === 'activo' || h.estado === 'dudoso'));
+    const igual = lista.find(h => h.dimension === dimension && normalizar(h.valor) === k && (h.estado === 'activo' || h.estado === 'dudoso') && mismoAutor(h));
     if (igual) {   // ya estaba: se suman las claves nuevas (sin duplicar); si ahora lo AFIRMA el usuario, sube de confianza
         const antes = JSON.stringify(igual);
         igual.claves = [...new Set([...(igual.claves || []), ...claves])];
@@ -264,7 +286,7 @@ export function guardarHecho(root, entrada, { ahora = hoy() } = {}) {
     const hecho = {
         id: 'h-' + crypto.createHash('sha1').update(`${dimension}|${k}|${ahora}`).digest('hex').slice(0, 8),
         dimension, valor, texto: entrada.texto ? String(entrada.texto) : undefined, claves: claves.length ? claves : undefined,
-        idioma: entrada.idioma || undefined, alcance, fuente,
+        idioma: entrada.idioma || undefined, alcance, fuente, autor: autor || undefined,
         estado: entrada.duda ? 'dudoso' : 'activo', creado: ahora,
         desde: entrada.desde || undefined, hasta: entrada.hasta || undefined,
         devlog: entrada.devlog ? String(entrada.devlog) : (entradaDelDia(root, ahora) || undefined),
@@ -274,7 +296,7 @@ export function guardarHecho(root, entrada, { ahora = hoy() } = {}) {
     const sustituidos = [];
     const esUnico = !entrada.duda && !FAMILIAS_VARIOS.test(dimension);
     // X-T18: lo que una sustitución limpia borraría en esta dimensión de valor único (activo y dudoso, como sustituir())
-    const mismaDim = esUnico ? lista.filter(h => h.dimension === dimension && (h.estado === 'activo' || h.estado === 'dudoso')) : [];
+    const mismaDim = esUnico ? lista.filter(h => h.dimension === dimension && (h.estado === 'activo' || h.estado === 'dudoso') && mismoAutor(h)) : [];
     // Si el valor nuevo trae un matiz y YA hay algo vigente aquí, NO sustituye: deja ambos activos (el aviso lo explica)
     const matiz = esUnico && mismaDim.length ? marcadorAmbiguo(hecho) : null;
     // X-T20: un hecho datado en el FUTURO no sustituye al de ahora — programa una transición: lo vigente sigue
@@ -379,7 +401,9 @@ function marcadorAmbiguo(hecho) {
 // Lo vigente de la dimensión (activo y dudoso: lo afirmado gana a la duda) pasa a sustituido por «nuevo»
 function sustituir(lista, dimension, nuevo, ahora) {
     const fin = nuevo.desde || ahora, out = [];
-    for (const h of lista) if (h !== nuevo && h.id !== nuevo.id && h.dimension === dimension && (h.estado === 'activo' || h.estado === 'dudoso')) {
+    const personal = PERSONALES.test(dimension);   // multiusuario: en personales solo pisa lo del mismo autor o legacy
+    for (const h of lista) if (h !== nuevo && h.id !== nuevo.id && h.dimension === dimension && (h.estado === 'activo' || h.estado === 'dudoso')
+        && (!personal || h.autor === nuevo.autor || !h.autor)) {
         h.estado = 'sustituido'; h.hasta = h.hasta && h.hasta < fin ? h.hasta : fin; h.sustituido_por = nuevo.id;
         out.push(h);
     }
