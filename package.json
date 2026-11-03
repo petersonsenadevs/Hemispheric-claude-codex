@@ -5,7 +5,7 @@
   "description": "Memoria determinista, offline y sin dependencias para agentes de IA (Claude Code, Codex), Obsidian y standalone.",
   "type": "module",
   "bin": {
-    "hemispheric": "cli/memoria.mjs"
+    "hemispheric": "cli/hemispheric.mjs"
   },
   "scripts": {
     "test": "node tests/test-frontera.mjs && node tests/test-hechos.mjs && node tests/test-hard-recall.mjs && node tests/test-install.mjs && node tests/test-plugin.mjs && node tests/test-paridad.mjs && node tests/test-cortex-visual.mjs"

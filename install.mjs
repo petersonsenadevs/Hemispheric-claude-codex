@@ -64,7 +64,7 @@ function gruposPlugin(ev) {
 function empaquetarPlugin(destino) {
     const dir = path.resolve(destino);
     let pkg = {}; try { pkg = JSON.parse(fs.readFileSync(path.join(AQUI, 'package.json'), 'utf8')); } catch {}
-    if (DRY) { log(`  [dry-run] empaquetaria el plugin en ${dir}`); return; }
+    if (DRY) { log(`  [dry-run] would package the plugin in ${dir}`); return; }
     const hooksDir = path.join(dir, 'hooks');
     fs.mkdirSync(hooksDir, { recursive: true });
     fs.mkdirSync(path.join(dir, '.claude-plugin'), { recursive: true });
@@ -78,7 +78,7 @@ function empaquetarPlugin(destino) {
     const plugin = { name: 'hemispheric', description: pkg.description || 'Memoria determinista, offline y sin dependencias para agentes de IA.', version: pkg.version || '0.0.0', author: { name: 'Peterson Sena' }, license: 'SEE LICENSE IN LICENSE' };
     fs.writeFileSync(path.join(dir, '.claude-plugin', 'plugin.json'), JSON.stringify(plugin, null, 2) + '\n');
     log(`  [plugin] ${dir}: .claude-plugin/plugin.json + hooks/hooks.json + ${n} .mjs`);
-    log('  Publicalo en un marketplace de Codex (como el de Senzu); el usuario lo instala y aprueba los hooks en la app.');
+    log('  Publish it to a Codex marketplace (like Senzu\'s); install it and approve the hooks in the app.');
 }
 
 // Construye los grupos de hooks de un evento en el formato de settings.json de Claude.
@@ -111,52 +111,52 @@ function fusionar(settings, { quitar }) {
 }
 
 function escribir(file, obj) {
-    if (DRY) { log(`  [dry-run] escribiría ${file}`); return; }
+    if (DRY) { log(`  [dry-run] would write ${file}`); return; }
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, JSON.stringify(obj, null, 2) + '\n');
 }
 
 function asegurarDir(dir) {
-    if (DRY) { log(`  [dry-run] crearía ${dir}`); return; }
+    if (DRY) { log(`  [dry-run] would create ${dir}`); return; }
     fs.mkdirSync(dir, { recursive: true });
 }
 
 function run() {
-    if (!fs.existsSync(path.join(SRC, 'hechos.mjs'))) { log(`No encuentro el núcleo en ${SRC}. ¿Ejecutas install.mjs desde el repo de Hemispheric?`); process.exit(2); }
+    if (!fs.existsSync(path.join(SRC, 'hechos.mjs'))) { log(`Core not found in ${SRC}. Run install.mjs from the Hemispheric repo.`); process.exit(2); }
 
     // Modo empaquetar plugin (Claude/Codex): no toca settings.json; genera un plugin autocontenido en <dir>.
     const destinoPlugin = opt('--plugin');
     if (destinoPlugin && destinoPlugin !== true) {
-        log(`Hemispheric · empaquetar plugin (Claude/Codex)${DRY ? ' (dry-run)' : ''}`);
+        log(`Hemispheric · package plugin (Claude/Codex)${DRY ? ' (dry-run)' : ''}`);
         empaquetarPlugin(destinoPlugin);
-        log('Listo.');
+        log('Done.');
         return;
     }
 
     const quitar = has('--uninstall');
-    log(`Hemispheric · ${quitar ? 'desinstalar' : 'instalar'}${GLOBAL ? ' (global)' : ''}${DRY ? ' (dry-run)' : ''}`);
+    log(`Hemispheric · ${quitar ? 'uninstall' : 'install'}${GLOBAL ? ' (global)' : ''}${DRY ? ' (dry-run)' : ''}`);
 
     // 1) Claude: hooks en settings.json (proyecto o HOME)
     const settingsFile = GLOBAL ? path.join(HOME, '.claude', 'settings.json') : path.join(PROYECTO, '.claude', 'settings.json');
     let settings;
     try { settings = leerJson(settingsFile); }
-    catch { log(`  [claude] AVISO: ${settingsFile} no es JSON válido; no lo toco (arréglalo y reintenta).`); process.exit(2); }
+    catch { log(`  [claude] WARNING: ${settingsFile} is not valid JSON; leaving it untouched (fix it and retry).`); process.exit(2); }
     escribir(settingsFile, fusionar(settings, { quitar }));
-    log(`  [claude] ${quitar ? 'hooks de Hemispheric quitados de' : 'hooks registrados en'} ${settingsFile}`);
+    log(`  [claude] ${quitar ? 'Hemispheric hooks removed from' : 'hooks registered in'} ${settingsFile}`);
 
     // 2) Manifiesto portable de hooks (lo consume el plugin para Claude/Codex, F10-T4)
     const manifest = path.join(PROYECTO, '.hemispheric', 'hooks.json');
-    if (quitar) { if (!DRY) { try { fs.rmSync(manifest, { force: true }); } catch {} } log(`  [manifiesto] quitado ${manifest}`); }
-    else { const h = {}; for (const ev of Object.keys(HOOKSET)) h[ev] = gruposDe(ev); escribir(manifest, { hooks: h }); log(`  [manifiesto] ${manifest} (lo usa el plugin de Codex/Claude)`); }
+    if (quitar) { if (!DRY) { try { fs.rmSync(manifest, { force: true }); } catch {} } log(`  [manifest] removed ${manifest}`); }
+    else { const h = {}; for (const ev of Object.keys(HOOKSET)) h[ev] = gruposDe(ev); escribir(manifest, { hooks: h }); log(`  [manifest] ${manifest} (used by the Codex/Claude plugin)`); }
 
     // 3) Carpetas de memoria (no se borran al desinstalar: son datos del usuario)
     if (!quitar) {
         asegurarDir(path.join(PROYECTO, '.hemispheric'));            // memoria del proyecto
         asegurarDir(path.join(HOME, '.config', 'hemispheric'));      // memoria global del usuario
-        log('  [memoria] .hemispheric/ (proyecto) y ~/.config/hemispheric/ (global) listas');
+        log('  [memory] .hemispheric/ (project) and ~/.config/hemispheric/ (global) ready');
     }
 
-    log('Listo.' + (quitar ? '' : ' Codex: el registro por evento va por el plugin (F10-T4); en Claude ya quedan activos.'));
+    log('Done.' + (quitar ? '' : ' Codex: per-event hooks go through the plugin; in Claude they are already active.'));
 }
 
 run();
