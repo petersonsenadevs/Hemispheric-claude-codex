@@ -64,7 +64,8 @@ email (or your system user), with no network. For a solo developer it's invisibl
 The Cortex draws everything your agent knows as a **brain of points** — one glow per fact. Each kind of memory settles
 in its own zone (decisions, goals, project facts, who you are, what was lived). Search a fact and only its node and
 connections light up, like a neuron firing. It is not a picture: it is a readout of the memory the agent actually uses.
-Generate it with `node cli/memory.mjs --cortex` (local HTML, no network).
+Open your own Cortex from any project folder with `npx hemispheric --cortex` (from source: `node cli/memory.mjs
+--cortex`). It writes a self-contained HTML file — offline, no network — and prints the path to open in your browser.
 
 ## Hosts
 
