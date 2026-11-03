@@ -4,3 +4,4 @@ node_modules/
 **/cortex/*.html
 *.log
 .DS_Store
+blog/
