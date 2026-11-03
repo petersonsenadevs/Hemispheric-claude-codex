@@ -414,6 +414,13 @@ const APP = String.raw`
     raiz.setAttribute('data-theme', oscuro ? 'dark' : 'light');
     tema.textContent = oscuro ? t('claro') : t('oscuro'); todo();
   });
+  // Embebido en la web (mismo origen → comparte localStorage): el Cortex SIGUE el tema de la web (clave 'theme';
+  // 'light' = claro, si no oscuro) para no quedar como una caja negra sobre una página clara (ni texto ilegible en el
+  // hero transparente). Reacciona al toggle de la web por el evento 'storage'.
+  function temaWeb() { try { return localStorage.getItem('theme') === 'light' ? 'light' : 'dark'; } catch (e) { return null; } }
+  function aplicarTemaWeb() { var w = temaWeb(); if (!w) return; raiz.setAttribute('data-theme', w); try { tema.textContent = w === 'light' ? t('oscuro') : t('claro'); } catch (e) {} }
+  aplicarTemaWeb();
+  window.addEventListener('storage', function (e) { if (e.key === 'theme') { aplicarTemaWeb(); todo(); } });
   var cli = $('#cliente');
   if (cli) cli.addEventListener('click', function () {
     previa = !previa; if (previa && region === 'temporal') region = null;
