@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/petersonsenadevs/Hemispheric-claude-codex/main/assets/crow.png" alt="Hemispheric — the crow that remembers" width="200" />
+</p>
+
 # Hemispheric
 
 **Deterministic, offline, zero-dependency memory for AI coding agents.** Hemispheric stores the stable facts your
