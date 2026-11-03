@@ -2,10 +2,13 @@
 
 Memoria **determinista, offline y sin dependencias** para agentes de IA. Guarda lo estable que dice el usuario,
 lo sustituye y lo fecha, y lo recupera siempre igual — en cualquier idioma, sin red y sin servidores. Se enchufa
-donde ya trabajas: Claude Code / Codex (hooks), Obsidian (plugin) y standalone.
+donde ya trabajas: Claude Code / Codex (hooks) y standalone.
 
-> Repo propio del motor Node, extraído de Senzu (`D:\dev-standards`) en el carve-out (fase F10). Mientras dura la
-> migración, Senzu sigue llevando su copia; aquí vive el núcleo que será la fuente de verdad.
+> **Documentación narrativa (qué es, mensaje, la Cortex, FAQ):** [`docs.md`](./docs.md). Este README es la referencia
+> rápida de estructura y comandos.
+>
+> Repo propio del motor Node, extraído de Senzu (`D:\dev-standards`) en el carve-out: aquí vive la **fuente de verdad**
+> del cerebro; Senzu consume una copia sincronizada.
 
 ## Estructura
 - `src/` — el núcleo: motor de hechos (`hechos.mjs`), base común (`lib`, `messages`, `session-end`), detección de
@@ -35,9 +38,9 @@ npm test
 (o `node tests/test-frontera.mjs && node tests/test-hechos.mjs && node tests/test-hard-recall.mjs`)
 
 ## Estado
-Carve-out en curso (F10): este repo ya arranca el núcleo con sus tests en verde. Pendiente: instalador propio
-(F10-T2), adaptador Obsidian (F10-T3), que Senzu pase a consumir este paquete (F10-T4) y paridad e2e entre
-anfitriones (F10-T5).
+Carve-out completo (F10): núcleo + instalador propio + Senzu consumiendo este paquete por sync + paridad e2e entre
+anfitriones, todo con tests en verde. La Cortex es la fuente de verdad aquí y se sincroniza a Senzu. Pendiente no
+bloqueante: empaquetado como plugin para el registro nativo en Codex.
 
 ## Licencia
 Doble licencia (© 2026 Peterson Sena):
