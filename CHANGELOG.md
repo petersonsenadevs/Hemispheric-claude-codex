@@ -5,6 +5,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/); versions follow
 
 ## [Unreleased]
 
+## [0.1.2] — 2026-11-03
+### Fixed
+- `homepage` points to the live site `https://corvusmem.vercel.app` (the `.com` domain isn't registered yet).
+
 ## [0.1.1] — 2026-11-03
 ### Fixed
 - `LICENSE` now names **Corvusmem** (the rename had missed it — it was still "Hemispheric").
