@@ -4,6 +4,13 @@ All notable changes to **Corvusmem** are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versions follow [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Added
+- README: badges (npm, node, zero-deps, offline, license), a **Why Corvusmem** list, a **Usage** section with the
+  everyday commands, and Website/Docs/Benchmarks/npm links.
+### Changed
+- Docs (README + `docs.md`): clarified that **per-project vs global only decides where the hooks turn on**, not where
+  memory lives (project facts always land in the repo's `.corvusmem/`), plus a **team-sharing recipe** (commit
+  `.corvusmem/` and, for a per-project install, `.claude/settings.json`; never commit `~/.config/corvusmem/`).
 
 ## [0.1.2] — 2026-11-03
 ### Fixed

@@ -4,12 +4,31 @@
 
 # Corvusmem
 
+<p align="center">
+  <a href="https://www.npmjs.com/package/corvusmem"><img src="https://img.shields.io/npm/v/corvusmem?color=e07a33" alt="npm version" /></a>
+  <img src="https://img.shields.io/node/v/corvusmem" alt="node" />
+  <img src="https://img.shields.io/badge/dependencies-0-brightgreen" alt="zero dependencies" />
+  <img src="https://img.shields.io/badge/offline-yes-brightgreen" alt="offline" />
+  <img src="https://img.shields.io/badge/license-PolyForm%20NC-blue" alt="license" />
+</p>
+
 **Deterministic, offline, zero-dependency memory for AI coding agents.** Corvusmem stores the stable facts your
 agent learns, replaces and dates them, and recalls them the same way every time — in any language, with no network
 and no servers. It plugs into where you already work: Claude Code / Codex (hooks) and a standalone CLI.
 
+🌐 [Website](https://corvusmem.vercel.app) · 📖 [Docs](https://corvusmem.vercel.app/docs) · 📊 [Benchmarks](https://corvusmem.vercel.app/benchmarks) · 📦 [npm](https://www.npmjs.com/package/corvusmem)
+
 > **Narrative docs (what it is, the message, the Cortex, FAQ):** [`docs.md`](./docs.md). This README is the quick
 > reference for structure and commands.
+
+## Why Corvusmem
+- **Deterministic** — same input, same result. No embeddings, no vector database, no model to run recall.
+- **Offline & private** — the memory is a plain file you own. No server, no cloud, no API key, no telemetry.
+- **Zero-dependency** — pure Node, identical on Windows, macOS and Linux.
+- **Any language** — keys and values in any language; recall is language-agnostic.
+- **Per-author** — on a shared project, teammates' personal facts never overwrite each other.
+- **Bounded footprint** — a hard cap keeps the context cost flat (O(1), not O(n)) — see the [benchmarks](https://corvusmem.vercel.app/benchmarks).
+- **See it** — the Cortex draws your whole memory as a local HTML brain.
 
 ## How it works
 Your agent forgets everything between sessions. Corvusmem is a memory it keeps: facts live in a lightweight local
@@ -46,6 +65,19 @@ your private memory.
 **Codex**: the hooks run through the plugin path (a marketplace in `~/.codex/config.toml`), not the project
 `settings.json`. Publish it to a Codex marketplace, install it and approve the hooks in the app. On Claude Code they
 are active right away.
+
+## Usage
+Once installed, the agent captures and recalls memory on its own — you don't do a thing. To look at it or steer it:
+```
+npx corvusmem --cortex                     # your whole memory as a local HTML brain (offline)
+npx corvusmem --recall "stripe webhook"    # ask what it already knows, from the terminal
+npx corvusmem --list                       # list every fact
+npx corvusmem --save --dimension project.stack --value "Astro + Tailwind" --scope project
+npx corvusmem --forget <id>                # drop one fact
+```
+The Cortex also takes `--client` (a shareable view with nothing private), `--output <dir>` and `--lang en|es|…`.
+Flags are English with Spanish aliases (`--save`/`--guardar`, `--recall`/`--recordar`); keys and values work in any
+language — the memory is language-agnostic.
 
 ## Test
 ```
