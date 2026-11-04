@@ -46,5 +46,8 @@
   },
   "bugs": {
     "url": "https://github.com/petersonsenadevs/corvusmem/issues"
+  },
+  "devDependencies": {
+    "gpt-tokenizer": "^4.1.0"
   }
 }

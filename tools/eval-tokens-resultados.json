@@ -1,6 +1,6 @@
 {
-  "generado": "2026-11-04T13:29:41.832Z",
-  "tokenizer": "estimación BPE (Intl.Segmenter)",
+  "generado": "2026-11-04T13:47:14.355Z",
+  "tokenizer": "gpt-tokenizer · o200k_base",
   "red": 0,
   "api": 0,
   "tamanos": [
@@ -8,9 +8,9 @@
       "hechos": 10,
       "porMensaje": {
         "n": 6,
-        "tokMed": 478,
-        "tokP95": 518,
-        "tokMax": 518,
+        "tokMed": 413,
+        "tokP95": 423,
+        "tokMax": 423,
         "charMed": 1406,
         "charMax": 1486,
         "byMed": 1449
@@ -18,7 +18,7 @@
       "maxHechosPorBloque": 5,
       "arranque": {
         "hechos": 12,
-        "tokens": 521,
+        "tokens": 477,
         "chars": 1512
       },
       "gibberishVacio": true
@@ -27,9 +27,9 @@
       "hechos": 100,
       "porMensaje": {
         "n": 6,
-        "tokMed": 478,
-        "tokP95": 518,
-        "tokMax": 518,
+        "tokMed": 413,
+        "tokP95": 423,
+        "tokMax": 423,
         "charMed": 1406,
         "charMax": 1486,
         "byMed": 1449
@@ -37,7 +37,7 @@
       "maxHechosPorBloque": 5,
       "arranque": {
         "hechos": 12,
-        "tokens": 355,
+        "tokens": 363,
         "chars": 1005
       },
       "gibberishVacio": true
@@ -46,9 +46,9 @@
       "hechos": 1000,
       "porMensaje": {
         "n": 6,
-        "tokMed": 478,
-        "tokP95": 518,
-        "tokMax": 518,
+        "tokMed": 413,
+        "tokP95": 423,
+        "tokMax": 423,
         "charMed": 1406,
         "charMax": 1486,
         "byMed": 1449
@@ -56,7 +56,7 @@
       "maxHechosPorBloque": 5,
       "arranque": {
         "hechos": 12,
-        "tokens": 355,
+        "tokens": 363,
         "chars": 1038
       },
       "gibberishVacio": true
@@ -65,9 +65,9 @@
       "hechos": 10000,
       "porMensaje": {
         "n": 6,
-        "tokMed": 478,
-        "tokP95": 518,
-        "tokMax": 518,
+        "tokMed": 413,
+        "tokP95": 423,
+        "tokMax": 423,
         "charMed": 1406,
         "charMax": 1486,
         "byMed": 1449
@@ -75,7 +75,7 @@
       "maxHechosPorBloque": 5,
       "arranque": {
         "hechos": 12,
-        "tokens": 355,
+        "tokens": 396,
         "chars": 1071
       },
       "gibberishVacio": true
