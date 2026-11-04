@@ -4,6 +4,8 @@ All notable changes to **Corvusmem** are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versions follow [SemVer](https://semver.org/).
 
 ## [Unreleased]
+
+## [0.1.3] — 2026-11-04
 ### Added
 - README: badges (npm, node, zero-deps, offline, license), a **Why Corvusmem** list, a **Usage** section with the
   everyday commands, and Website/Docs/Benchmarks/npm links.
