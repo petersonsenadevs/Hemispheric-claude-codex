@@ -1,0 +1,84 @@
+{
+  "generado": "2026-11-04T13:29:41.832Z",
+  "tokenizer": "estimación BPE (Intl.Segmenter)",
+  "red": 0,
+  "api": 0,
+  "tamanos": [
+    {
+      "hechos": 10,
+      "porMensaje": {
+        "n": 6,
+        "tokMed": 478,
+        "tokP95": 518,
+        "tokMax": 518,
+        "charMed": 1406,
+        "charMax": 1486,
+        "byMed": 1449
+      },
+      "maxHechosPorBloque": 5,
+      "arranque": {
+        "hechos": 12,
+        "tokens": 521,
+        "chars": 1512
+      },
+      "gibberishVacio": true
+    },
+    {
+      "hechos": 100,
+      "porMensaje": {
+        "n": 6,
+        "tokMed": 478,
+        "tokP95": 518,
+        "tokMax": 518,
+        "charMed": 1406,
+        "charMax": 1486,
+        "byMed": 1449
+      },
+      "maxHechosPorBloque": 5,
+      "arranque": {
+        "hechos": 12,
+        "tokens": 355,
+        "chars": 1005
+      },
+      "gibberishVacio": true
+    },
+    {
+      "hechos": 1000,
+      "porMensaje": {
+        "n": 6,
+        "tokMed": 478,
+        "tokP95": 518,
+        "tokMax": 518,
+        "charMed": 1406,
+        "charMax": 1486,
+        "byMed": 1449
+      },
+      "maxHechosPorBloque": 5,
+      "arranque": {
+        "hechos": 12,
+        "tokens": 355,
+        "chars": 1038
+      },
+      "gibberishVacio": true
+    },
+    {
+      "hechos": 10000,
+      "porMensaje": {
+        "n": 6,
+        "tokMed": 478,
+        "tokP95": 518,
+        "tokMax": 518,
+        "charMed": 1406,
+        "charMax": 1486,
+        "byMed": 1449
+      },
+      "maxHechosPorBloque": 5,
+      "arranque": {
+        "hechos": 12,
+        "tokens": 355,
+        "chars": 1071
+      },
+      "gibberishVacio": true
+    }
+  ]
+}
