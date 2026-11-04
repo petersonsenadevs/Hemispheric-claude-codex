@@ -29,6 +29,11 @@ npx corvusmem install --dry-run    # show what it would do, without writing
 Merge-safe (it never overwrites your hooks or permissions) and idempotent. It creates `.corvusmem/` (project memory)
 and, if requested, `~/.config/corvusmem/` (global user memory).
 
+**Per-project or global only decides *where the hooks turn on*** — in one repo (`--claude`, the config lives in that
+repo) or in every project (`--global`, in your home). It does **not** change where memory lives: a project's facts
+always land in that repo's `.corvusmem/`, and your personal facts in `~/.config/corvusmem/`. You don't need a
+per-project install just to keep memory in the repo — it goes there either way.
+
 **Codex**: the user installs it from the Codex app (via plugin), not from the CLI. The agent does not install on Codex.
 
 ## How it works
@@ -58,6 +63,10 @@ When several people work on the same project, the shared memory keeps each perso
 prefers Vim and Bob prefers Emacs, both are kept and neither overwrites the other. Facts that describe the **project
 itself** (stack, decisions) stay shared and have no owner. You configure nothing — the author is read from your `git`
 email (or your system user), with no network. For a solo developer it's invisible; it just works.
+
+**To share it with the team**, commit `.corvusmem/` (the shared project memory) and, if you installed per-project,
+`.claude/settings.json` so teammates get the hooks the moment they clone. Never commit `~/.config/corvusmem/` — that is
+your private, personal memory.
 
 ## The Cortex
 

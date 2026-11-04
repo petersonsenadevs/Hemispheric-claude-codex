@@ -34,6 +34,15 @@ npx corvusmem install --dry-run    # show what it would do, without writing
 Merge-safe (it never overwrites your hooks or permissions) and idempotent. It creates `.corvusmem/` (project
 memory) and `~/.config/corvusmem/` (global memory), and writes `.corvusmem/hooks.json` (a portable manifest).
 
+**Per-project vs global only decides *where the hooks turn on*** — for one repo (`--claude`, config in that repo) or
+for every project (`--global`, in your home). It does **not** change where memory lives: project facts always land in
+that repo's `.corvusmem/`, your personal facts in `~/.config/corvusmem/`. You never need a per-project install just to
+keep memory in the repo — that happens either way.
+
+**Sharing with a team**: commit `.corvusmem/` (the shared project memory) and, for a per-project install,
+`.claude/settings.json` so teammates get the hooks the moment they clone. Never commit `~/.config/corvusmem/` — that is
+your private memory.
+
 **Codex**: the hooks run through the plugin path (a marketplace in `~/.codex/config.toml`), not the project
 `settings.json`. Publish it to a Codex marketplace, install it and approve the hooks in the app. On Claude Code they
 are active right away.
