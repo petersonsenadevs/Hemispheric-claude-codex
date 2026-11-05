@@ -1269,8 +1269,13 @@ function lexicoDe(dimension) { return LEXICO_TOKENS.get(dimension.slice(dimensio
 // ---------------------------------------------------------------- mapa de la memoria (X-T9)
 // Para que el agente SEPA qué hay y qué puede consultar (no solo lo que coincide con un mensaje): los temas de cada
 // zona, cuántas decisiones y entradas del devlog. Corto: es un índice, no el contenido.
-const NOMBRE_ZONA = { frontal: 'objetivos, pendientes y límites', parietal: 'el proyecto', temporal: 'el usuario', hipocampo: 'aprendizajes y notas' };
-export function mapaMemoria(root, { ahora = hoy(), maxTemas = 12 } = {}) {
+const NOMBRE_ZONA = {
+    frontal: { en: 'goals, todos and limits', es: 'objetivos, pendientes y límites' },
+    parietal: { en: 'the project', es: 'el proyecto' },
+    temporal: { en: 'the user', es: 'el usuario' },
+    hipocampo: { en: 'learnings and notes', es: 'aprendizajes y notas' },
+};
+export function mapaMemoria(root, { ahora = hoy(), maxTemas = 12, lang = localeUI(root) } = {}) {
     const vig = todosLosHechos(root).filter(h => vigente(h, ahora) || h.estado === 'dudoso');
     const zonas = {};
     for (const h of vig) {
@@ -1282,7 +1287,7 @@ export function mapaMemoria(root, { ahora = hoy(), maxTemas = 12 } = {}) {
     const entradas = entradasDelDevlog(root, 100000);
     return {
         hechos: vig.length,
-        zonas: Object.entries(NOMBRE_ZONA).filter(([z]) => zonas[z]).map(([z, nombre]) => ({ zona: z, nombre, temas: [...zonas[z].keys()].slice(0, maxTemas), mas: Math.max(0, zonas[z].size - maxTemas) })),
+        zonas: Object.entries(NOMBRE_ZONA).filter(([z]) => zonas[z]).map(([z, nombre]) => ({ zona: z, nombre: nombre[lang] || nombre.en, temas: [...zonas[z].keys()].slice(0, maxTemas), mas: Math.max(0, zonas[z].size - maxTemas) })),
         decisiones, reglas, entradas: entradas.length, ultima: entradas[0] ? { num: entradas[0].devlog, titulo: entradas[0].valor } : null,
     };
 }
