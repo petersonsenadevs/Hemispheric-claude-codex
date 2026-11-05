@@ -4,6 +4,15 @@ All notable changes to **Corvusmem** are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versions follow [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- **Portable, durable hook paths.** `install` now copies the hook files into a stable location (`.corvusmem/hooks/`
+  per project, `~/.config/corvusmem/hooks/` for a global install) and references them with `${CLAUDE_PROJECT_DIR}`
+  (per-project) or an absolute path (global) — instead of the ephemeral `npx` cache path (`…/_npx/<hash>/…`). This
+  fixes hooks silently not running after npx clears its cache, on a fresh reinstall, or when a committed project
+  `.claude/settings.json` + `.corvusmem/` is shared with a teammate (now portable across machines and OSes). A
+  reinstall also removes any old npx-path entries. `uninstall` removes the copied hooks but keeps your memory.
+
+## [0.2.1] — 2026-11-05
 ### Changed
 - The memory-map **zone names** now follow the UI language (English by default, Spanish with `CORVUS_LANG`/marker
   `lang`), closing the last Spanish label in the injected memory map.

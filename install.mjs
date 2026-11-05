@@ -43,8 +43,28 @@ const HOOKSET = {
     SessionEnd:       [{ files: ['session-end.mjs'] }],
 };
 
-const cmdDe = file => `node "${path.join(SRC, file).replace(/\\/g, '/')}"`;   // runtime garantizado: node, rutas con /
-const esNuestro = cmd => typeof cmd === 'string' && cmd.includes(SRC.replace(/\\/g, '/'));   // nuestras entradas, por su ruta
+// Los hooks del nucleo se COPIAN a un sitio DURABLE (NO la ruta efimera de npx `_npx/<hash>` ni node_modules): el
+// proyecto (.corvusmem/hooks) o el HOME global (~/.config/corvusmem/hooks). El comando del settings.json apunta ahi,
+// asi sobrevive a que npx limpie su cache y cada instalacion queda autocontenida.
+const hooksDir = GLOBAL ? path.join(HOME, '.config', 'corvusmem', 'hooks') : path.join(PROYECTO, '.corvusmem', 'hooks');
+// En PROYECTO, $CLAUDE_PROJECT_DIR hace el settings.json PORTABLE: al commitear .corvusmem/ y .claude/settings.json,
+// vale para todo el equipo en cualquier maquina/OS. En GLOBAL, ruta absoluta al HOME (los settings globales no se
+// comparten entre maquinas).
+const cmdDe = file => GLOBAL
+    ? `node "${path.join(hooksDir, file).replace(/\\/g, '/')}"`
+    : `node "\${CLAUDE_PROJECT_DIR}/.corvusmem/hooks/${file}"`;   // forma braceada documentada (portable Win/Mac/Linux)
+// Nuestras entradas (para fusionar sin pisar las del usuario y para MIGRAR las viejas con ruta de npx): cualquier
+// comando que mencione corvusmem y uno de nuestros ficheros de hook.
+const NUESTROS_HOOKS = new Set(Object.values(HOOKSET).flat().flatMap(g => g.files));
+const esNuestro = cmd => typeof cmd === 'string' && /corvusmem/i.test(cmd) && [...NUESTROS_HOOKS].some(f => cmd.includes(f));
+// Copia los .mjs del nucleo (hooks + dependencias del mismo directorio: autocontenido) al sitio durable. Devuelve n.
+function copiarHooks(dir) {
+    if (DRY) { log(`  [dry-run] would copy core hook files to ${dir}`); return 0; }
+    fs.mkdirSync(dir, { recursive: true });
+    let n = 0;
+    for (const f of fs.readdirSync(SRC)) if (f.endsWith('.mjs')) { fs.copyFileSync(path.join(SRC, f), path.join(dir, f)); n++; }
+    return n;
+}
 
 // Para EMPAQUETAR como plugin (Claude/Codex): el comando apunta al propio plugin, no a una ruta de la maquina.
 const cmdPlugin = file => `node "\${CLAUDE_PLUGIN_ROOT}/hooks/${file}"`;
@@ -135,6 +155,15 @@ function run() {
 
     const quitar = has('--uninstall');
     log(`Corvusmem · ${quitar ? 'uninstall' : 'install'}${GLOBAL ? ' (global)' : ''}${DRY ? ' (dry-run)' : ''}`);
+
+    // 0) Copias DURABLES de los hooks (o quitarlas). La MEMORIA (.corvusmem/memoria, ~/.config/corvusmem) no se toca.
+    if (quitar) {
+        if (!DRY) { try { fs.rmSync(hooksDir, { recursive: true, force: true }); } catch {} }
+        log(`  [hooks] removed ${hooksDir}`);
+    } else {
+        const n = copiarHooks(hooksDir);
+        log(`  [hooks] ${n} core file(s) copied to ${hooksDir.replace(/\\/g, '/')}`);
+    }
 
     // 1) Claude: hooks en settings.json (proyecto o HOME)
     const settingsFile = GLOBAL ? path.join(HOME, '.claude', 'settings.json') : path.join(PROYECTO, '.claude', 'settings.json');

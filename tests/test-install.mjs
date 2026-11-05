@@ -22,7 +22,7 @@ const run = (P, H, ...extra) => spawnSync(process.execPath, [INSTALL, '--project
 const settingsProy = P => path.join(P, '.claude', 'settings.json');
 const leer = f => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; } };
 const cmds = (s, ev) => (s && s.hooks && Array.isArray(s.hooks[ev]) ? s.hooks[ev] : []).flatMap(g => (g.hooks || []).map(h => h.command));
-const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('/src/' + file));
+const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('corvusmem/hooks/' + file));
 
 // ---- instalación limpia -------------------------------------------------------------------------------
 {
@@ -37,6 +37,9 @@ const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('/src/' + file))
     ok(!cmds(s, 'UserPromptSubmit').some(c => c.includes('prompt-router')), 'NO registra método Senzu (prompt-router)');
     ok(fs.existsSync(path.join(P, '.corvusmem', 'hooks.json')), 'deja el manifiesto portable .corvusmem/hooks.json');
     ok(fs.existsSync(path.join(P, '.corvusmem')) && fs.existsSync(path.join(H, '.config', 'corvusmem')), 'crea memoria de proyecto y global');
+    ok(fs.existsSync(path.join(P, '.corvusmem', 'hooks', 'session-start.mjs')) && fs.existsSync(path.join(P, '.corvusmem', 'hooks', 'facts.mjs')), 'copia DURABLE de los hooks y sus deps a .corvusmem/hooks/');
+    ok(cmds(s, 'SessionStart').some(c => c.includes('${CLAUDE_PROJECT_DIR}/.corvusmem/hooks/session-start.mjs')), 'proyecto: comando PORTABLE con ${CLAUDE_PROJECT_DIR} (no ruta de maquina)');
+    ok(!cmds(s, 'SessionStart').some(c => c.includes('/src/') || c.includes('_npx')), 'proyecto: NO apunta a src/ del paquete ni a la cache efimera de npx');
 }
 
 // ---- reinstalación idempotente ------------------------------------------------------------------------
@@ -44,8 +47,8 @@ const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('/src/' + file))
     const P = nuevoProyecto(), H = nuevoHome();
     run(P, H); run(P, H);                       // dos veces
     const s = leer(settingsProy(P));
-    ok(cmds(s, 'UserPromptSubmit').filter(c => c.includes('/src/live-recall.mjs')).length === 1, 'idempotente: recuerdo-vivo no se duplica tras reinstalar');
-    ok(cmds(s, 'PostToolUse').filter(c => c.includes('/src/facts-guard.mjs')).length === 2, 'idempotente: hechos-guard sigue en sus 2 grupos (Edit y Bash), sin duplicar');
+    ok(cmds(s, 'UserPromptSubmit').filter(c => c.includes('corvusmem/hooks/live-recall.mjs')).length === 1, 'idempotente: recuerdo-vivo no se duplica tras reinstalar');
+    ok(cmds(s, 'PostToolUse').filter(c => c.includes('corvusmem/hooks/facts-guard.mjs')).length === 2, 'idempotente: hechos-guard sigue en sus 2 grupos (Edit y Bash), sin duplicar');
 }
 
 // ---- desinstalación limpia ----------------------------------------------------------------------------
@@ -55,8 +58,9 @@ const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('/src/' + file))
     const r = run(P, H, '--uninstall');
     ok(r.status === 0, 'desinstalar: sale 0');
     const s = leer(settingsProy(P));
-    ok(!cmds(s, 'UserPromptSubmit').some(c => c.includes('/src/')), 'desinstalar: quita nuestros hooks');
+    ok(!cmds(s, 'UserPromptSubmit').some(c => c.includes('corvusmem/hooks/')), 'desinstalar: quita nuestros hooks');
     ok(!fs.existsSync(path.join(P, '.corvusmem', 'hooks.json')), 'desinstalar: quita el manifiesto');
+    ok(!fs.existsSync(path.join(P, '.corvusmem', 'hooks')), 'desinstalar: quita la copia durable de hooks');
     ok(fs.existsSync(path.join(P, '.corvusmem')), 'desinstalar: NO borra la memoria del proyecto (son datos del usuario)');
 }
 
@@ -73,7 +77,7 @@ const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('/src/' + file))
     ok(tiene(s, 'UserPromptSubmit', 'live-recall.mjs'), 'y añade el nuestro junto al suyo');
     run(P, H, '--uninstall');
     s = leer(settingsProy(P));
-    ok(cmds(s, 'UserPromptSubmit').includes('node mi-hook.mjs') && !cmds(s, 'UserPromptSubmit').some(c => c.includes('/src/')), 'desinstalar: quita el nuestro y deja el del usuario');
+    ok(cmds(s, 'UserPromptSubmit').includes('node mi-hook.mjs') && !cmds(s, 'UserPromptSubmit').some(c => c.includes('corvusmem/hooks/')), 'desinstalar: quita el nuestro y deja el del usuario');
     ok(s.permissions && s.permissions.allow[0] === 'Bash(ls:*)', 'desinstalar: no toca permissions del usuario');
 }
 
@@ -92,6 +96,7 @@ const tiene = (s, ev, file) => cmds(s, ev).some(c => c.includes('/src/' + file))
     const P = nuevoProyecto(), H = nuevoHome();
     run(P, H, '--global');
     ok(tiene(leer(path.join(H, '.claude', 'settings.json')), 'SessionStart', 'session-start.mjs'), '--global: registra en ~/.claude/settings.json');
+    ok(fs.existsSync(path.join(H, '.config', 'corvusmem', 'hooks', 'session-start.mjs')), '--global: copia durable en ~/.config/corvusmem/hooks/');
     ok(!fs.existsSync(settingsProy(P)), '--global: no toca el settings del proyecto');
 
     const P2 = nuevoProyecto(), H2 = nuevoHome();
