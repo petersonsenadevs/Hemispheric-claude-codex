@@ -76,7 +76,7 @@ for (const [lang, prompt] of Object.entries(CONSULTAS)) {
     const outs = Object.keys(ANFITRIONES).map(a =>
         [a, correr('session-start.mjs', a, { session_id: `ps-${RUN}-${a}`, hook_event_name: 'SessionStart' })]);
     const ref = outs[0][1];
-    ok(ref.includes('HECHOS que ya sabes') && ref.includes('Valencia'), 'arranque: inyecta el bloque de memoria', ref.slice(0, 80));
+    ok(ref.includes('FACTS you already know') && ref.includes('Valencia'), 'arranque: inyecta el bloque de memoria (EN por defecto)', ref.slice(0, 80));
     for (const [a, o] of outs.slice(1)) ok(o === ref, `arranque: ${a} idéntico a ${outs[0][0]}`, `len ${o.length} vs ${ref.length}`);
 }
 

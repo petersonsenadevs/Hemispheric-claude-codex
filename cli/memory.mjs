@@ -50,8 +50,10 @@ async function motor() {   // facts.mjs de los hooks: junto a la skill (plugin o
 }
 const m = await motor();
 root = m.rutaNativa ? m.rutaNativa(rutaPedida) : root;   // /c/… de Git Bash, C:/ o barra final → la misma carpeta
+const lang = m.localeUI ? m.localeUI(root) : 'en';   // F14-T4: familia en inglés por defecto (canónico y .jsonl intactos)
+const dim = d => m.etiquetaDimension ? m.etiquetaDimension(d, lang) : d;
 const fecha = s => String(s || '').slice(0, 10);
-const linea = h => `- [${h.dimension}] ${h.valor}${h.estado !== 'activo' ? ` (${h.estado}${h.hasta ? ' ' + fecha(h.hasta) : ''})` : ''}${h.desde ? ` · desde ${fecha(h.desde)}` : ''}${h.autor ? ` · de ${h.autor}` : ''}${h.devlog ? ` · ver ${h.devlog}` : ''} · ${h.alcance} · ${h.id}`;
+const linea = h => `- [${dim(h.dimension)}] ${h.valor}${h.estado !== 'activo' ? ` (${h.estado}${h.hasta ? ' ' + fecha(h.hasta) : ''})` : ''}${h.desde ? ` · desde ${fecha(h.desde)}` : ''}${h.autor ? ` · de ${h.autor}` : ''}${h.devlog ? ` · ver ${h.devlog}` : ''} · ${h.alcance} · ${h.id}`;
 
 if (opt('--guardar')) {
     let r;

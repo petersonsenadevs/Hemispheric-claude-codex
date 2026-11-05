@@ -4,6 +4,15 @@ All notable changes to **Corvusmem** are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versions follow [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Changed
+- **Standalone context is now memory-only and English-first.** When Corvusmem is installed on its own, the
+  `SessionStart` hook injects **only memory** (facts, open goals/todos, obsolescence/contradiction notices, the memory
+  map and last-session continuity) — the work-method block (plan, skills, devlog, stack, design system, conventions)
+  is gone. Output defaults to **English** via the message catalog (`CORVUS_LANG`/marker `lang` switch it back to
+  Spanish). The per-message recall hook is rebranded `[Corvusmem]` and in-context hints now use `npx corvusmem`.
+- **Family labels shown in English** (`identity`, `preference`, `project`, `goal`, `pending`, `constraint`, `note`,
+  `fact`, `learning`, `link`) in the CLI and the injected context. The internal canonical keys and the `.jsonl` files
+  are unchanged, and input still accepts both English and Spanish family names.
 
 ## [0.1.3] — 2026-11-04
 ### Added

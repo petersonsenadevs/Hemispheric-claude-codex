@@ -1,8 +1,12 @@
 # F14 — Diseño sellado: Corvusmem producto serio (CLI inglés + multiusuario)
 
-> Documento de la tarjeta **F14-T1**. Fija el modelo ANTES de tocar código. Regla de toda la fase: **sin romper nada**
-> — los `.jsonl` ya guardados se leen igual, los flags en castellano siguen funcionando, `npm test` verde tras cada paso.
-> Pendiente del OK del usuario antes de pasar a F14-T2.
+> Documento de la tarjeta **F14-T1** (SELLADO). Fija el modelo ANTES de tocar código. Regla de toda la fase: **sin
+> romper nada** — los `.jsonl` ya guardados se leen igual, los flags en castellano siguen funcionando, `npm test` verde
+> tras cada paso. **Validado por la implementación** (F14-T2 flags/alias y F14-T3 multiusuario ya cerradas y en verde):
+> `autorActual` = `CORVUS_USER` > git `user.email` > usuario del SO (`facts.mjs`); `PERSONALES = /^(identidad|preferencia)/`;
+> regla legacy `mismoAutor = mismo autor O sin autor` (`facts.mjs` guardarHecho). La tabla C cubre los 33 flags en inglés
+> de `cli/memory.mjs` (ninguno sin mapear, comprobado). Pendiente diferido: la ruta global `.config/senzu`→`corvusmem`
+> (sección B, va con un patch aparte).
 
 ## A) Multiusuario: campo `autor`
 

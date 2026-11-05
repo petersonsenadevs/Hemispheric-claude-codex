@@ -152,7 +152,7 @@ ok(primero(S, 'القاهرة').dimension === 'identidad.ubicacion' && primero(S
     ok(/en-curso, resuelto o abandonado/.test(err), 'un progreso desconocido se rechaza');
     const cli = (...a) => spawnSync(process.execPath, [CLI, '--path', C, ...a], { encoding: 'utf8', env: process.env }).stdout;
     m.guardarHecho(C, { dimension: 'pendiente.logo', valor: 'revisar el logo con el cliente' }, { ahora: T(C, 20) });
-    ok(/abierto desde/.test(cli('--abiertos')) && /^Resuelto: .*pendiente\.logo.* — aprobado/m.test(cli('--resolver', 'pendiente.logo', '--como', 'aprobado')), 'CLI: --abiertos y --resolver con nota');
+    ok(/abierto desde/.test(cli('--abiertos')) && /^Resuelto: .*pending\.logo.* — aprobado/m.test(cli('--resolver', 'pendiente.logo', '--como', 'aprobado')), 'CLI: --abiertos y --resolver con nota (familia EN)');
 }
 
 // 3f. procedencia, confianza y casi-duplicados (F6-T4)
@@ -213,7 +213,7 @@ ok(primero(S, 'القاهرة').dimension === 'identidad.ubicacion' && primero(S
     // CLI
     const cliF = (...a) => spawnSync(process.execPath, [CLI, '--path', F, ...a], { encoding: 'utf8', env: process.env }).stdout;
     let o = cliF('--guardar', '--dimension', 'aprendizaje.colas-2', '--valor', 'las colas de Horizon necesitan reiniciarse tras desplegar!', '--fuente', 'agente');
-    ok(/ojo, casi duplicado \(se parece un \d+ %\).*aprendizaje\.colas\b.*--olvidar/.test(o), 'CLI: avisa del casi duplicado y de qué hacer', o);
+    ok(/ojo, casi duplicado \(se parece un \d+ %\).*learning\.colas\b.*--olvidar/.test(o), 'CLI: avisa del casi duplicado y de qué hacer (familia EN)', o);
     ok(m.todosLosHechos(F).find(h => h.dimension === 'aprendizaje.colas-2').fuente === 'agente', 'CLI: --fuente agente se guarda');
     o = cliF('--guardar', '--dimension', 'identidad.ciudad', '--valor', 'Sevilla', '--duda');
     ok(/ojo, contradice .*Valencia.*pregunta al usuario/.test(o), 'CLI: avisa de la contradicción y pide preguntar', o);
@@ -556,7 +556,7 @@ rec = m.recuerdo(R, 'pagos stripe');
 ok(rec.length >= 1 && rec.every(x => x.fuente === 'hecho'), 'recuerdo: si el buscador del devlog falla, quedan los hechos (no se cae)', JSON.stringify(rec.map(x => x.fuente)));
 delete process.env.SENZU_BUSCADOR;
 const rc = spawnSync(process.execPath, [CLI, '--path', R, '--recordar', 'pagos stripe webhooks'], { encoding: 'utf8', env: process.env }).stdout;
-ok(/\[hecho\] \[proyecto\.pasarela-pago\] Stripe/.test(rc) && /\[memoria\] D-001/.test(rc) && !/ver 001 · ver 001/.test(rc), 'CLI: --recordar con fuentes y sin «ver» repetido', rc);
+ok(/\[hecho\] \[project\.pasarela-pago\] Stripe/.test(rc) && /\[memoria\] D-001/.test(rc) && !/ver 001 · ver 001/.test(rc), 'CLI: --recordar con fuentes (familia EN) y sin «ver» repetido', rc);
 
 // 7c. enlace con la entrada del devlog del día (F1-T2)
 const E = proyecto('enlace');
@@ -605,14 +605,14 @@ ok(mc.status === 1 && /D-001 cita «Laravel 10», pero el hecho proyecto\.stack 
 const cli = (d, ...a) => spawnSync(process.execPath, [CLI, '--path', d, ...a], { encoding: 'utf8', env: process.env });
 const L = proyecto('cli');
 let c = cli(L, '--guardar', '--dimension', 'preferencia.idioma-codigo', '--valor', 'inglés', '--claves', 'language,idioma', '--texto', 'el código en inglés');
-ok(c.status === 0 && /^Guardado: - \[preferencia\.idioma-codigo\] inglés/.test(c.stdout), 'CLI: --guardar', c.stdout + c.stderr);
+ok(c.status === 0 && /^Guardado: - \[preference\.idioma-codigo\] inglés/.test(c.stdout), 'CLI: --guardar (familia EN)', c.stdout + c.stderr);
 c = cli(L, '--guardar', '--dimension', 'preferencia.idioma-codigo', '--valor', 'español');
 ok(/sustituye/.test(c.stdout) && /sustituido: .*inglés/.test(c.stdout), 'CLI: avisa de lo que sustituye', c.stdout);
 c = cli(L, '--buscar', 'code language');
 ok(/español/.test(c.stdout) && !/inglés \(/.test(c.stdout) && /coincide/.test(c.stdout), 'CLI: --buscar trae lo vigente con el motivo', c.stdout);
 ok(/inglés \(sustituido/.test(cli(L, '--buscar', 'idioma', '--historico').stdout), 'CLI: --historico');
 ok(/Nada en la memoria/.test(cli(L, '--buscar', 'qwerty').stdout), 'CLI: sin resultados lo dice');
-ok(/preferencia\.idioma-codigo/.test(cli(L, '--contexto').stdout), 'CLI: --contexto');
+ok(/preference\.idioma-codigo/.test(cli(L, '--contexto').stdout), 'CLI: --contexto (familia EN)');
 ok(cli(L, '--guardar', '--dimension', 'x').status !== 0, 'CLI: sin valor no guarda');
 
 // 9. multiusuario (F14): en memoria de proyecto COMPARTIDA, los hechos personales no se pisan entre autores

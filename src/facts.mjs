@@ -16,8 +16,8 @@ import crypto from 'node:crypto';
 import os from 'node:os';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { ruta, rutaMemoriaUsuario, rutaEstado } from './lib.mjs';
-export { rutaNativa } from './lib.mjs';   // para memory.mjs: --path con C:\, C:/ o /c/ de Git Bash → el mismo almacén
+import { ruta, rutaMemoriaUsuario, rutaEstado, localeUI } from './lib.mjs';
+export { rutaNativa, localeUI } from './lib.mjs';   // memory.mjs: --path (C:\, C:/, /c/ de Git Bash → el mismo almacén) e idioma de UI
 
 export const FAMILIAS_VARIOS = /^(objetivo|pendiente|nota|hecho|enlace|aprendizaje)(\.|$)/;
 // Multiusuario (F14): familias PERSONALES (de la persona, no del proyecto). En memoria de proyecto COMPARTIDA, su
@@ -70,6 +70,18 @@ export function claveDimension(d) {
 //   --claves: minúsculas, sin repetir; el término en inglés y el del idioma del usuario. Para los temas conocidos, el
 //   inglés lo pone el motor.
 export const FAMILIAS = ['identidad', 'preferencia', 'proyecto', 'objetivo', 'pendiente', 'restriccion', 'nota', 'hecho', 'aprendizaje', 'enlace'];
+// F14-T4: etiqueta en INGLÉS de cada familia, solo para MOSTRAR. El canónico interno y los .jsonl siguen en castellano
+// (identidad, preferencia…); el input ya acepta inglés por ALIAS_FAMILIA. etiquetaDimension traduce solo el prefijo de
+// familia al mostrar; el tema (texto libre del usuario) no se toca. Con lang='es' (o familia desconocida) deja el canónico.
+export const FAMILIA_EN = {
+    identidad: 'identity', preferencia: 'preference', proyecto: 'project', objetivo: 'goal', pendiente: 'pending',
+    restriccion: 'constraint', nota: 'note', hecho: 'fact', aprendizaje: 'learning', enlace: 'link',
+};
+export function etiquetaDimension(dimension, lang = 'en') {
+    const d = String(dimension), i = d.indexOf('.');
+    const fam = i < 0 ? d : d.slice(0, i);
+    return (lang === 'en' && FAMILIA_EN[fam]) ? FAMILIA_EN[fam] + (i < 0 ? '' : d.slice(i)) : d;
+}
 const ALIAS_FAMILIA = {
     identity: 'identidad', identite: 'identidad', identitat: 'identidad', identita: 'identidad', identidade: 'identidad', usuario: 'identidad', user: 'identidad', persona: 'identidad', perfil: 'identidad', profile: 'identidad',
     preference: 'preferencia', preferences: 'preferencia', preferencias: 'preferencia', pref: 'preferencia', preferenz: 'preferencia', gusto: 'preferencia',
@@ -928,9 +940,9 @@ export function pistaFutura(texto) {
 export function intencionTemporal(texto) {
     return pistaTemporal(texto) ? 'historical' : pistaFutura(texto) ? 'future' : 'none';
 }
-export function recuerdo(root, consulta, { limite = 6, historico = false, futuro = false } = {}) {
+export function recuerdo(root, consulta, { limite = 6, historico = false, futuro = false, lang = localeUI(root) } = {}) {
     const hechos = buscarHechos(root, consulta, { historico, futuro, limite }).map(x => ({
-        fuente: 'hecho', id: x.hecho.id, texto: `[${x.hecho.dimension}] ${x.hecho.valor}`, motivo: x.motivo, ver: x.hecho.devlog || null, hecho: x.hecho,
+        fuente: 'hecho', id: x.hecho.id, texto: `[${etiquetaDimension(x.hecho.dimension, lang)}] ${x.hecho.valor}`, motivo: x.motivo, ver: x.hecho.devlog || null, hecho: x.hecho,
         puntuacion: x.puntuacion, debil: !!x.debil,
     }));
     const vistos = new Set();
